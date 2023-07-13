@@ -1784,7 +1784,7 @@ class QuoteController extends Controller
            ->leftjoin('products','quotes.product_id','products.id')
            ->leftjoin('categorys','quotes.cat_id','categorys.id')
            // ->leftjoin('sub_categorys','categorys.id','sub_categorys.cat_id')
-           ->select('quotes.rfq_no','quotes.user_id','quotes.id as qid','products.slug','products.status','categorys.*','users.id','products.id as pid','categorys.id as cid','quotes.quantity','orders.letterhead','orders.po_no','orders.cus_po_no','orders.po_date','orders.status as po_st','orders.amdnt_no','quotes.rfq_type','orders.sche as orsche')
+           ->select('quotes.rfq_no','quotes.user_id','quotes.id as qid','products.slug','products.status','categorys.*','users.id','products.id as pid','categorys.id as cid','quotes.quantity','orders.letterhead','orders.po_no','orders.cus_po_no','orders.po_date','orders.status as po_st','orders.amdnt_no','quotes.rfq_type','orders.sche as orsche','orders.type as otype')
            ->orderBy('quotes.updated_at','desc')
            ->where('orders.po_no',$id)
            ->whereNull('quotes.deleted_at')
@@ -1818,6 +1818,7 @@ class QuoteController extends Controller
             $result[$key]['quantity'] = $value->quantity;
             $result[$key]['po_no'] = $value->po_no;
             $result[$key]['cus_po_no'] = $value->cus_po_no;
+            $result[$key]['otype'] = $value->otype;
             $result[$key]['letterhead'] = asset('storage/app/public/images/letterheads/'.$value->letterhead);
             $date =  date_create($value->po_date);
             $po_dt = date_format($date,"d-m-Y");
@@ -2971,7 +2972,12 @@ class QuoteController extends Controller
           ->leftjoin('address as addr1','quote_schedules.bill_to','addr1.id')
           ->leftjoin('address as addr2','quote_schedules.ship_to','addr2.id')
           ->select('quote_schedules.*','addr1.id as billto','addr1.state as billtostate','addr1.addressone as billtoaddressone','addr1.addresstwo as billtoaddresstwo','addr1.city as billtocity','addr1.pincode as billtopincode','addr2.id as shito','addr2.state as shiptostate','addr2.addressone as shiptoaddressone','addr2.addresstwo as shiptoaddresstwo','addr2.city as shiptocity','addr2.pincode as shiptopincode','sub_categorys.sub_cat_name')
-          ->where('quote_schedules.quote_id',$qid)->where('quote_schedules.schedule_no',$orsche)->where('quote_schedules.quote_status',1)->whereNull('quote_schedules.deleted_at')->get();
+          ->where('quote_schedules.quote_id',$qid);
+          if(!empty($orsche) && isset($orsche))
+          {
+             $res = $res->where('quote_schedules.schedule_no',$orsche);
+          }
+          $res = $res->where('quote_schedules.quote_status',1)->whereNull('quote_schedules.deleted_at')->get();
 
           foreach ($res as $key => $value) {
 
