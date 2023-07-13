@@ -2963,7 +2963,7 @@ class QuoteController extends Controller
    // -------------------------------------------------------------------------------------
       public function getPoSchedulesBySche($qid,$orsche)
       {  
-          dd($orsche);
+          // dd($orsche);
           $quote_sches = array();
 
           $res = DB::table('quote_schedules')
