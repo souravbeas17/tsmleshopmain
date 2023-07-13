@@ -1686,7 +1686,7 @@ class QuoteController extends Controller
               config('global.success_status'));
             
       }
-      public function submitPobkp(Request $request)
+      public function submitPo(Request $request)
       {
         // dd('ok');
          // echo "<pre>";print_r($request->all());exit();
@@ -2879,7 +2879,7 @@ class QuoteController extends Controller
 
    // ---------------------------------- po submit ----------------------------------------
 
-     public function submitPo(Request $request)
+     public function submitPoMultiple(Request $request)
       {
         // dd('ok');
          // echo "<pre>";print_r($request->all());exit();
