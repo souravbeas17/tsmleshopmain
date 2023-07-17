@@ -664,6 +664,11 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
       Route::get('unblock-user-admin/{user_id}',[AdminUserManageController::class,'unBlockUserAdmin'])->name('unblock_user_admin');
       Route::get('admin-customer-list',[AdminUserManageController::class,'customerListAdmin'])->name('admin_castomer_list');
       Route::post('admin-customer-details',[AdminUserManageController::class,'customerDetailsAdmin'])->name('admin_castomer_details');
+
+      Route::get('block-castomer-admin-single/{user_id}',[AdminUserManageController::class,'blockCustomerAdminSingle'])->name('block_castomer_admin_single');
+      Route::get('unblock-castomer-admin-single/{user_id}',[AdminUserManageController::class,'UnblockCustomerAdminSingle'])->name('unblock_castomer_admin_single');
+      Route::post('block-castomer-admin-multi',[AdminUserManageController::class,'blockCustomerAdminMulti'])->name('block_castomer_admin_multi');
+
       //------------------Portal Register Customer-----------------------
         Route::get('admin-portal-customer-list',[AdminUserManageController::class,'portalCustListAdmin'])->name('admin_portal_castomer_list');
         Route::post('admin-up-cust-sap-code',[AdminUserManageController::class,'adminUpCustSapCode'])->name('admin_up-_cust_sap_code');
