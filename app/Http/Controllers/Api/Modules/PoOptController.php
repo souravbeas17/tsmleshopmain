@@ -174,7 +174,7 @@ public function getCamCustomer()
     	
     }
 
-    public function getRejectedOrder()
+    public function getRejectedOrderAdmin()
     {
     	try
     	{
