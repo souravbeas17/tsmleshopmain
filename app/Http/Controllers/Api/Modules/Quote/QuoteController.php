@@ -1835,7 +1835,7 @@ class QuoteController extends Controller
           $password = "123456";
 
           $encrypted = CryptoJsAes::encrypt($result, $password);
-            return response()->json(['status'=>1,'message' =>'success','result' => $result],config('global.success_status'));
+            return response()->json(['status'=>1,'message' =>'success','result' => $encrypted],config('global.success_status'));
           }
           else{
 
@@ -1942,11 +1942,11 @@ class QuoteController extends Controller
     {
            $quote = DB::table('orders')
            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-           ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+           // ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
            ->leftjoin('users','quotes.user_id','users.id')
-           ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status',DB::raw("(sum(quote_schedules.quantity)) as tot_qt"),'orders.amdnt_no','orders.cus_po_no')
-           ->orderBy('quotes.updated_at','desc')
-           ->groupBy('quotes.rfq_no');
+           ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status','orders.amdnt_no','orders.cus_po_no')
+           ->orderBy('quotes.updated_at','desc');
+           // ->groupBy('quotes.rfq_no');
            if(!empty($user_id))
            {
               $quote = $quote->where('quotes.user_id',$user_id);
@@ -1956,7 +1956,7 @@ class QuoteController extends Controller
 
               $quote = $quote->where('users.zone',$user_state);
            }
-           $quote = $quote->whereNull('quotes.deleted_at')->where('quote_schedules.quote_status',1)
+           $quote = $quote->whereNull('quotes.deleted_at')
            ->get()->toArray();
            // echo "<pre>";print_r($quote);exit();
 
@@ -1968,7 +1968,7 @@ class QuoteController extends Controller
             $result[$key]['cus_po_no'] = $value->cus_po_no;
             $result[$key]['user'] = $value->name;
             $result[$key]['rfq_no'] = $value->rfq_no;
-            $result[$key]['quantity'] = $value->tot_qt;
+            // $result[$key]['quantity'] = $value->tot_qt;
             $result[$key]['amdnt_no'] = $value->amdnt_no;
             $date =  date_create($value->po_date);
             $po_dt = date_format($date,"d/m/Y");
@@ -2878,7 +2878,73 @@ class QuoteController extends Controller
    }
 
    // ---------------------------------- po submit ----------------------------------------
+     public function submitPoMultipleok(Request $request)
+      {
+           \DB::beginTransaction();
+        try{
+          // echo "<pre>";
+          $scheall = $request->input('allSche_No');
+          $trim = trim($scheall,",");
+          $variable = explode(",",$trim);
 
+          foreach ($variable as $key => $value) {
+            # code...
+            // echo $request->input('rfqNo'.$value)."<br>";
+            // echo $request->input('po_no'.$value)."<br>";
+            // echo $request->input('po_date'.$value)."<br>";
+            // echo $request->input('type'.$value)."<br>";
+            // echo $request->input('sche'.$value)."<br>";
+
+
+            if($request->hasFile('letterHead'.$value))
+            {
+              // echo "<pre>";print_r($request->file('letterHead'.$value));
+              $image = $request->file('letterHead'.$value); 
+
+              $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
+              Storage::putFileAs('public/images/letterheads', $image, $filename);
+
+              $poArr['letterhead'] = $filename;
+              $chk = Storage::exists("public/images/letterheads",$filename);
+              // echo "<pre>";print_r($filename);
+            }
+            
+            $poArr['rfq_no'] = $request->input('rfqNo'.$value);
+            $poArr['po_no'] = $request->input('po_no'.$value);
+            $poArr['amdnt_no'] = "";
+            $poArr['type'] = $request->input('type'.$value);
+            $poArr['sche'] = $request->input('sche'.$value);
+            $date =  date_create($request->input('po_date'.$value));
+            $po_dt = date_format($date,"Y-m-d");
+            $poArr['po_date'] = $po_dt;
+            $poArr['status'] = 2;
+
+            // echo "<pre>";print_r($poArr);exit();
+
+            Order::create($poArr);
+
+            
+          }
+            \DB::commit();
+
+          return response()->json(['status'=>1,
+              'message' =>'success',
+              'result' => 'P.O created'],
+              config('global.success_status'));
+            }
+            catch(\Exception $e){
+
+               \DB::rollback();
+
+              return response()->json(['status'=>0,
+                'message' =>'error',
+                'result' => $e->getMessage()],
+                config('global.failed_status'));
+          }
+
+          
+         
+      }
      public function submitPoMultiple(Request $request)
       {
         // dd('ok');
@@ -2964,7 +3030,7 @@ class QuoteController extends Controller
    // -------------------------------------------------------------------------------------
       public function getPoSchedulesBySche($qid,$orsche)
       {  
-          dd($orsche);
+          // dd($orsche); 
           $quote_sches = array();
 
           $res = DB::table('quote_schedules')
