@@ -64,6 +64,7 @@ use App\Http\Controllers\Api\Modules\Admin\CronSchedulerController;
 use App\Http\Controllers\Api\Modules\Admin\AdminNotificationController;
 
 use App\Http\Controllers\Api\Modules\PoOptController;
+use App\Http\Controllers\Api\Modules\Quote\PoeditController;
 
 /*
 |--------------------------------------------------------------------------
@@ -169,19 +170,19 @@ Route::post('do-summary',[DoSummeryController::class,'doSummary']);
 
 // ---------------------------------------------------------------
 Route::group(['namespace'=>'Api\Modules'],function(){
-	// Index Page Routes ....
-	Route::get('index-page/{proId}/{plant_id?}', [ProductController::class,'indexPage'])->name('index_page');
-	Route::get('popular-product', [ProductController::class,'popularProduct'])->name('popular');
-	Route::get('product-manu', [ProductController::Class,'productManu'])->name('product_manu');
-	Route::any('filter-product-menu', [ProductController::class,'productFilter'])->name('product_filter');
-	Route::get('category-dropdown', [ProductController::Class,'CategoryDropdown'])->name('category_list');
-	Route::get('product-dropdown', [ProductController::class,'ProductDropdown'])->name('product_list_my');
+  // Index Page Routes ....
+  Route::get('index-page/{proId}/{plant_id?}', [ProductController::class,'indexPage'])->name('index_page');
+  Route::get('popular-product', [ProductController::class,'popularProduct'])->name('popular');
+  Route::get('product-manu', [ProductController::Class,'productManu'])->name('product_manu');
+  Route::any('filter-product-menu', [ProductController::class,'productFilter'])->name('product_filter');
+  Route::get('category-dropdown', [ProductController::Class,'CategoryDropdown'])->name('category_list');
+  Route::get('product-dropdown', [ProductController::class,'ProductDropdown'])->name('product_list_my');
    Route::post('subcategory-product-menu', [ProductController::class,'subcatFilter']);
 
-	Route::get('product-details/{catId}/{proId}', [ProductController::class,'productDetails'])->name('product_details');
-	Route::get('sub_cat_details/{subId}', [ProductController::class,'sub_cat_details']);
+  Route::get('product-details/{catId}/{proId}', [ProductController::class,'productDetails'])->name('product_details');
+  Route::get('sub_cat_details/{subId}', [ProductController::class,'sub_cat_details']);
 
-	// Route::get('get_all_news_all',[NewsController::class,'getAllNews']);//news list for all
+  // Route::get('get_all_news_all',[NewsController::class,'getAllNews']);//news list for all
    // Sayan.....
    Route::get('product-related-category-fetch',[ProductController::class,'product_related']);
 });
@@ -210,118 +211,125 @@ Route::group(['prefix' => 'user'],function ()
 
          Route::post('user-dashboard', [DashboardController::class,'userDashboard'])->name('user_dashboard');
 
-	    Route::post('logout', [AuthController::class,'logout']);
-			Route::post('refresh', [AuthController::class,'refresh']);
-			Route::get('profile', [AuthController::class,'me']);
-			Route::post('update-mobile-number',[AuthController::class,'updateMobileNUmber']);
-			Route::post('update-mobile-user',[AuthController::class,'verifyMobileOtpUser']);
-			// Route::resource('customer', [UserController]);
-			Route::post('customers/{id}', [UserController::class,'update']);
-			Route::post('reset-password', [UserController::class,'resetPassword'])->name('reset_password');
+      Route::post('logout', [AuthController::class,'logout']);
+      Route::post('refresh', [AuthController::class,'refresh']);
+      Route::get('profile', [AuthController::class,'me']);
+      Route::post('update-mobile-number',[AuthController::class,'updateMobileNUmber']);
+      Route::post('update-mobile-user',[AuthController::class,'verifyMobileOtpUser']);
+      // Route::resource('customer', [UserController]);
+      Route::post('customers/{id}', [UserController::class,'update']);
+      Route::post('reset-password', [UserController::class,'resetPassword'])->name('reset_password');
 
 
-   	// Route::group(['namespace'=>'Api\Modules'],function(){
-   		// Route::get('download-po-pdf/{id}','Quote\QuoteController@downloadPdf')->name('downloadPdf');
-   		 Route::post('store_quotes',[QuoteController::class,'storeQuotes']);
-   		 Route::post('update_quotes',[QuoteController::class,'updateQuotes']);
-   		 Route::post('quotes_status_update',[QuoteController::class,'quotesStatusUpdate']);
-   		 Route::get('quotes_history/{rfq_no}',[QuoteController::class,'quotesHistoryCustomer']);
-   		 Route::get('quotes_list',[QuoteController::class,'getQuotesList']);
-   		 Route::get('get_quote_by_id/{id}',[QuoteController::class,'getQuoteById']);
-   		 Route::post('update_quotes_sche',[QuoteController::class,'updateQuoteSche']);
-   		 Route::post('submit_requote_id',[QuoteController::class,'submitRequoteId']);
-   		 Route::get('get_requote_list',[QuoteController::class,'getRequoteList']);
-   		 Route::post('create_rfq_deliveries',[QuoteController::class,'createRfqdeliveries']);
-   		 Route::post('delete_quote_by_id',[QuoteController::class,'deleteQuoteById']);
-   		 Route::get('get_quote_sche_by_id/{id}',[QuoteController::class,'getQuoteScheById']);
-   		 Route::post('delete_quote_sche',[QuoteController::class,'deleteQuoteSche']);
-   		 Route::get('kam_quotes_list',[QuoteController::class,'getKamQuotesList']);
-   		 Route::post('view_remarks',[QuoteController::class,'viewRemarks']);
-   		 Route::get('get_quote_po_by_id/{id}',[QuoteController::class,'getPoQuoteById']);
-   		 Route::post('submit_po',[QuoteController::class,'submitPo']);
+    // Route::group(['namespace'=>'Api\Modules'],function(){
+      // Route::get('download-po-pdf/{id}','Quote\QuoteController@downloadPdf')->name('downloadPdf');
+       Route::post('store_quotes',[QuoteController::class,'storeQuotes']);
+       Route::post('update_quotes',[QuoteController::class,'updateQuotes']);
+       Route::post('quotes_status_update',[QuoteController::class,'quotesStatusUpdate']);
+       Route::get('quotes_history/{rfq_no}',[QuoteController::class,'quotesHistoryCustomer']);
+       Route::get('quotes_list',[QuoteController::class,'getQuotesList']);
+       Route::get('get_quote_by_id/{id}',[QuoteController::class,'getQuoteById']);
+       Route::post('update_quotes_sche',[QuoteController::class,'updateQuoteSche']);
+       Route::post('submit_requote_id',[QuoteController::class,'submitRequoteId']);
+       Route::get('get_requote_list',[QuoteController::class,'getRequoteList']);
+       Route::post('create_rfq_deliveries',[QuoteController::class,'createRfqdeliveries']);
+       Route::post('delete_quote_by_id',[QuoteController::class,'deleteQuoteById']);
+       Route::get('get_quote_sche_by_id/{id}',[QuoteController::class,'getQuoteScheById']);
+       Route::post('delete_quote_sche',[QuoteController::class,'deleteQuoteSche']);
+       Route::get('kam_quotes_list',[QuoteController::class,'getKamQuotesList']);
+       Route::post('view_remarks',[QuoteController::class,'viewRemarks']);
+       Route::get('get_quote_po_by_id/{id}',[QuoteController::class,'getPoQuoteById']);
+       Route::post('submit_po',[QuoteController::class,'submitPo']);
        Route::post('submit_po_new',[QuoteController::class,'submitPoNew']);
-   		 Route::get('get_po_by_id/{id}',[QuoteController::class,'getPoById']);
-   		 Route::get('get_po_all',[QuoteController::class,'getPoAll']);
-   		 Route::get('get_po_all_kam',[QuoteController::class,'getPoAllKam']);
-   		 Route::post('po_status_update',[QuoteController::class,'poStatusUpdate']);
-   		 Route::post('update_po',[QuoteController::class,'updatePo']);
-   		 Route::post('sales_update_rfq',[QuoteController::class,'salesUpdateRfq']);
-   		 Route::get('get_user_address/{id}',[QuoteController::class,'getUserAddress']);
-   		 Route::get('get_plants_by_type/{id}',[QuoteController::class,'getPlantsByType']);
-   		 Route::get('get_quotedel_by_id/{id}',[QuoteController::class,'getQuotedelById']);
-   		 Route::get('get_plant_addr/{id}',[QuoteController::class,'getPlantAddr']);
-   		 Route::get('reject_sche_by_date',[QuoteController::class,'rejectScheByDate']);
-   		 Route::get('get_all_deliveries',[QuoteController::class,'getAllDeliveries']);
-   		 Route::post('update_letterhead',[QuoteController::class,'updateLetterhead']);
-   		 Route::get('count_cus_po/{cus_po}',[QuoteController::class,'countCusPo']);
-   		 Route::post('update_count_requote',[RequoteController::class,'updateCountRequote']);
-   		 Route::get('get_count_requote/{rfq_no}',[RequoteController::class,'getCountRequote']);
-   		 Route::get('get_count_sche/{rfq_no}',[RequoteController::class,'getCountSche']);
-   		 Route::post('price_break_save',[RequoteController::class,'priceBreakSave']);
-   		 Route::get('get_price_comp',[RequoteController::class,'getPriceComp']);
-   		 Route::post('get_price_break',[RequoteController::class,'getPriceBreak']);
-   		 Route::post('sm_remark_save',[RequoteController::class,'smRemarkSave']);
+       Route::post('submit_po_mul',[QuoteController::class,'submitPoMultipleok']);
+       Route::get('get_po_by_id/{id}',[QuoteController::class,'getPoById']);
+       Route::get('get_po_all',[QuoteController::class,'getPoAll']);
+       Route::get('get_po_all_kam',[QuoteController::class,'getPoAllKam']);
+       Route::post('po_status_update',[QuoteController::class,'poStatusUpdate']);
+       Route::post('update_po',[QuoteController::class,'updatePo']);
+       Route::post('sales_update_rfq',[QuoteController::class,'salesUpdateRfq']);
+       Route::get('get_user_address/{id}',[QuoteController::class,'getUserAddress']);
+       Route::get('get_plants_by_type/{id}',[QuoteController::class,'getPlantsByType']);
+       Route::get('get_quotedel_by_id/{id}',[QuoteController::class,'getQuotedelById']);
+       Route::get('get_plant_addr/{id}',[QuoteController::class,'getPlantAddr']);
+       Route::get('reject_sche_by_date',[QuoteController::class,'rejectScheByDate']);
+       Route::get('get_all_deliveries',[QuoteController::class,'getAllDeliveries']);
+       Route::post('update_letterhead',[QuoteController::class,'updateLetterhead']);
+       Route::get('count_cus_po/{cus_po}',[QuoteController::class,'countCusPo']);
+       Route::post('update_count_requote',[RequoteController::class,'updateCountRequote']);
+       Route::get('get_count_requote/{rfq_no}',[RequoteController::class,'getCountRequote']);
+       Route::get('get_count_sche/{rfq_no}',[RequoteController::class,'getCountSche']);
+       Route::post('price_break_save',[RequoteController::class,'priceBreakSave']);
+       Route::get('get_price_comp',[RequoteController::class,'getPriceComp']);
+       Route::post('get_price_break',[RequoteController::class,'getPriceBreak']);
+       Route::post('sm_remark_save',[RequoteController::class,'smRemarkSave']);
           Route::get('sm_remark_by_id/{rfq_no}',[RequoteController::class,'smRemarkById']);
           Route::get('sm_amend_po',[RequoteController::class,'smAmendPo']);
 
           Route::post('submit_remarks',[RemarkController::class,'submitremarks']);
           Route::get('get_rfq_st/{rfq_no}',[QuoteController::class,'getRfqSt']);
 
-   		 Route::post('get-store-pro-price',[PriceManagementController::class,'getProPrice'])->name('get_store_pro_price');
-   		 Route::get('get-threshold-price',[PriceManagementController::class,'getThresholdPrice'])->name('get_threshold_price');
-   		 // Complain Remarks Routes....
-   		 Route::get('complain-category-list', [ComplainController::class,'getComplainCategory'])->name('complain_category');
-   		 Route::get('complain-sub-category-list/{id}', [ComplainController::class,'getComplainSubCategory'])->name('complain_sub_category');
-   		 Route::get('complain-sub-category2-list/{id}', [ComplainController::class,'getComplainSubCategory2'])->name('complain_sub_category2');
-   		 Route::get('complain-sub-category3-list/{id}', [ComplainController::class,'getComplainSubCategory3'])->name('complain_sub_category3');
+      // ----------------- po edit -------------------------------------------------
 
-   		Route::post('store-complain-main', [ComplainController::class,'storeComplainMain'])->name('store_complain_main');
+      Route::post('po_edit_multiple',[PoeditController::class,'poEditMultiple']);
+      Route::post('po_update_sche',[PoeditController::class,'poUpdateSche']);
+      // ---------------------------------------------------------------------------
 
-		Route::post('remarks-replay', [ComplainController::class,'remarksReplay'])->name('remarks_replay');
+       Route::post('get-store-pro-price',[PriceManagementController::class,'getProPrice'])->name('get_store_pro_price');
+       Route::get('get-threshold-price',[PriceManagementController::class,'getThresholdPrice'])->name('get_threshold_price');
+       // Complain Remarks Routes....
+       Route::get('complain-category-list', [ComplainController::class,'getComplainCategory'])->name('complain_category');
+       Route::get('complain-sub-category-list/{id}', [ComplainController::class,'getComplainSubCategory'])->name('complain_sub_category');
+       Route::get('complain-sub-category2-list/{id}', [ComplainController::class,'getComplainSubCategory2'])->name('complain_sub_category2');
+       Route::get('complain-sub-category3-list/{id}', [ComplainController::class,'getComplainSubCategory3'])->name('complain_sub_category3');
 
-		Route::get('complain-details/{complainId}', [ComplainController::class,'complainDetails'])->name('complain_details');
+      Route::post('store-complain-main', [ComplainController::class,'storeComplainMain'])->name('store_complain_main');
 
-		Route::get('complain-details-kam/{po_number}/{kam_id?}', [ComplainController::class,'complainDetailsKam'])->name('complain_details_kam');
+    Route::post('remarks-replay', [ComplainController::class,'remarksReplay'])->name('remarks_replay');
 
-		Route::post('send-com-mail-rm', [ComplainController::class,'sendComMailRm'])->name('send_com_mail_rm');
+    Route::get('complain-details/{complainId}', [ComplainController::class,'complainDetails'])->name('complain_details');
 
-		Route::get('complain-download/{complainId}', [ComplainController::class,'complainDownload'])->name('complain_download');
+    Route::get('complain-details-kam/{po_number}/{kam_id?}', [ComplainController::class,'complainDetailsKam'])->name('complain_details_kam');
 
-		Route::post('get-complain-list-kam', [ComplainController::class,'getComplainListKam'])->name('get_complain_list_kam');
+    Route::post('send-com-mail-rm', [ComplainController::class,'sendComMailRm'])->name('send_com_mail_rm');
 
+    Route::get('complain-download/{complainId}', [ComplainController::class,'complainDownload'])->name('complain_download');
 
-		Route::get('closed-remarks/{complainId}', [ComplainController::class,'closedRemarks'])->name('closed_remarks');
-
-		Route::get('get-deparment', [ComplainDepController::class,'getDeparment'])->name('get_deparment');
-		Route::post('get-deparment-mail', [ComplainDepController::class,'getDeparmentMail'])->name('get_mail_deparment');
-   		Route::post('send-com-mail', [ComplainManageController::class,'sendComMail'])->name('send_com_mail');
-   		Route::post('com-mail-confirm', [ComplainManageController::class,'comMailConfirm'])->name('com_mail_confirm');
-   		Route::post('get-com-manage-data', [ComplainManageController::class,'getComManageData'])->name('get_com_manage_data');
-   		Route::post('store-com-files', [ComplainManageController::class,'storeComFiles'])->name('store_com_files');
+    Route::post('get-complain-list-kam', [ComplainController::class,'getComplainListKam'])->name('get_complain_list_kam');
 
 
-   		 Route::post('monthly_prod_plan_submit',[OrderPlanningController::class,'monthlyPlanSubmit']);
-   		 Route::post('prod-qty-upload',[OrderPlanningController::class,'prodQtyUpload']);
-   		 Route::post('get_order_planning',[OrderPlanningController::class,'getOrderPlanning']);
-   		 Route::post('submit_dispatch_plan',[OrderPlanningController::class,'submitDispatchPlan']);
-   		 Route::get('get_order_planning_by_id/{id}',[OrderPlanningController::class,'getOrderPlanById']);
-   		 Route::post('monthly_prod_plan_up',[OrderPlanningController::class,'monthlyPlanUpdate']);
+    Route::get('closed-remarks/{complainId}', [ComplainController::class,'closedRemarks'])->name('closed_remarks');
+
+    Route::get('get-deparment', [ComplainDepController::class,'getDeparment'])->name('get_deparment');
+    Route::post('get-deparment-mail', [ComplainDepController::class,'getDeparmentMail'])->name('get_mail_deparment');
+      Route::post('send-com-mail', [ComplainManageController::class,'sendComMail'])->name('send_com_mail');
+      Route::post('com-mail-confirm', [ComplainManageController::class,'comMailConfirm'])->name('com_mail_confirm');
+      Route::post('get-com-manage-data', [ComplainManageController::class,'getComManageData'])->name('get_com_manage_data');
+      Route::post('store-com-files', [ComplainManageController::class,'storeComFiles'])->name('store_com_files');
 
 
-   	// ----------------- quote po notification -------------------------------------------
+       Route::post('monthly_prod_plan_submit',[OrderPlanningController::class,'monthlyPlanSubmit']);
+       Route::post('prod-qty-upload',[OrderPlanningController::class,'prodQtyUpload']);
+       Route::post('get_order_planning',[OrderPlanningController::class,'getOrderPlanning']);
+       Route::post('submit_dispatch_plan',[OrderPlanningController::class,'submitDispatchPlan']);
+       Route::get('get_order_planning_by_id/{id}',[OrderPlanningController::class,'getOrderPlanById']);
+       Route::post('monthly_prod_plan_up',[OrderPlanningController::class,'monthlyPlanUpdate']);
 
-   		 Route::post('cam_notification_submit',[NotificationController::class,'camNotificationSubmit']);
-   		 Route::get('get_cam_notification/{id}',[NotificationController::class,'getCamNotification']);
 
-   		 Route::post('cus_notification_submit',[NotificationController::class,'cusNotificationSubmit']);
-   		 Route::get('get_cus_notification/{id}',[NotificationController::class,'getCusNotification']);
+    // ----------------- quote po notification -------------------------------------------
 
-   		 Route::post('sales_notification_submit',[NotificationController::class,'salesNotificationSubmit']);
-   		 Route::get('get_sales_notification',[NotificationController::class,'getSalesNotification']);
+       Route::post('cam_notification_submit',[NotificationController::class,'camNotificationSubmit']);
+       Route::get('get_cam_notification/{id}',[NotificationController::class,'getCamNotification']);
 
-   		 Route::post('up_cam_noti',[NotificationController::class,'upCamNoti']);
-   		 Route::post('up_cus_noti',[NotificationController::class,'upCusNoti']);
-   		 Route::post('up_sales_noti',[NotificationController::class,'upSalesNoti']);
+       Route::post('cus_notification_submit',[NotificationController::class,'cusNotificationSubmit']);
+       Route::get('get_cus_notification/{id}',[NotificationController::class,'getCusNotification']);
+
+       Route::post('sales_notification_submit',[NotificationController::class,'salesNotificationSubmit']);
+       Route::get('get_sales_notification',[NotificationController::class,'getSalesNotification']);
+
+       Route::post('up_cam_noti',[NotificationController::class,'upCamNoti']);
+       Route::post('up_cus_noti',[NotificationController::class,'upCusNoti']);
+       Route::post('up_sales_noti',[NotificationController::class,'upSalesNoti']);
          Route::post('clear_notification',[NotificationController::class,'clearNotification']);
          Route::post('opt_notification_submit',[NotificationController::class,'optNotificationSubmit']);
          Route::get('get_opt_notification',[NotificationController::class,'getOptNotification']);
@@ -335,24 +343,24 @@ Route::group(['prefix' => 'user'],function ()
          Route::get('get_sh_notification',[NotificationController::class,'getShNotification']);
          Route::get('up_sh_notification/{id}',[NotificationController::class,'upShNotification']);
        Route::get('up_sh_notification_all',[NotificationController::class,'upShNotificationAll']);
-   	// ----------------- sap sales order --------------------------------------------
+    // ----------------- sap sales order --------------------------------------------
 
         Route::post('get_plant_id',[SalesContractController::class,'getPlantId']);
         Route::get('get_all_mats',[SapSummaryController::class,'getallmats']);
 
         Route::get('price_break_fetch/{po_no}',[SalesContractController::class,'priceBreakFetch']);
-   		Route::post('sales_cnt_submit',[SalesContractController::class,'salesCntSubmit']);
-   		// Route::get('get_price_break_by_id/{mat_no}','Sap\SalesOrder\SalesContractController@priceBreakById');
-   		Route::post('update_contarcts_no',[SalesContractController::class,'updateContarctsNo']);
+      Route::post('sales_cnt_submit',[SalesContractController::class,'salesCntSubmit']);
+      // Route::get('get_price_break_by_id/{mat_no}','Sap\SalesOrder\SalesContractController@priceBreakById');
+      Route::post('update_contarcts_no',[SalesContractController::class,'updateContarctsNo']);
 
-   		Route::get('prepare_so_list',[SalesContractController::class,'prepareSoList']);
-   		Route::post('so_submit',[SalesContractController::class,'so_submit']);
+      Route::get('prepare_so_list',[SalesContractController::class,'prepareSoList']);
+      Route::post('so_submit',[SalesContractController::class,'so_submit']);
 
 
-   		Route::get('get_all_sc_po',[SalesContractController::class,'getAllScPo']);
+      Route::get('get_all_sc_po',[SalesContractController::class,'getAllScPo']);
 
-   		Route::get('get_so_sc/{sc_no}',[SalesContractController::class,'getSoSc']);
-   		Route::get('get_po_summary/{po_no}',[SapSummaryController::class,'getPoSummary']);
+      Route::get('get_so_sc/{sc_no}',[SalesContractController::class,'getSoSc']);
+      Route::get('get_po_summary/{po_no}',[SapSummaryController::class,'getPoSummary']);
          Route::post('sc_excel_mail',[SalesContractController::class,'scExcelMail']);
          Route::get('get_all_excelsc',[SalesContractController::class,'getallexcelsc']);
          Route::post('up_excelsc',[SalesContractController::class,'upexcelsc']);
@@ -363,69 +371,69 @@ Route::group(['prefix' => 'user'],function ()
          Route::get('mis_sales_excel',[MisController::class,'missalesplanorders']);
          Route::get('mis_down_excel',[MisController::class,'misdownexcel']);
              // ---------------------------------------------------
-   		//------------------- Sap Routes --------------------------//
+      //------------------- Sap Routes --------------------------//
 
-   		// Sap Contract Type Routes....
-   		Route::get('get_sap_contract_type',[SapContractTypeController::class,'getSapContractType'])->name('get_sap_contract_type');
+      // Sap Contract Type Routes....
+      Route::get('get_sap_contract_type',[SapContractTypeController::class,'getSapContractType'])->name('get_sap_contract_type');
 
-   		// Sap Customer Group Routes....
-   		Route::get('get_sap_customer_group',[SapCustomerGroupController::class,'getSapCustomerGroup'])->name('get_sap_customer_group');
+      // Sap Customer Group Routes....
+      Route::get('get_sap_customer_group',[SapCustomerGroupController::class,'getSapCustomerGroup'])->name('get_sap_customer_group');
 
-   		// Sap Delivery Mode Routes....
-   		Route::get('get_sap_delivery_mode',[SapDeliveryModeController::class,'getSapDeliveryMode'])->name('get_sap_delivery_mode');
+      // Sap Delivery Mode Routes....
+      Route::get('get_sap_delivery_mode',[SapDeliveryModeController::class,'getSapDeliveryMode'])->name('get_sap_delivery_mode');
 
-   		// Sap Freight Routes....
-   		Route::get('get_sap_freight',[SapFreightController::class,'getSapFreight'])->name('get_sap_freight');
+      // Sap Freight Routes....
+      Route::get('get_sap_freight',[SapFreightController::class,'getSapFreight'])->name('get_sap_freight');
 
-   		// Sap Freight Indication Routes....
-   		Route::get('get_sap_freight_indi',[SapFreightIndicationController::class,'getSapFreightIndi'])->name('get_sap_freight_indi');
+      // Sap Freight Indication Routes....
+      Route::get('get_sap_freight_indi',[SapFreightIndicationController::class,'getSapFreightIndi'])->name('get_sap_freight_indi');
 
-   		// Sap Incoterms Routes....
-   		Route::get('get_sap_incoterms',[SapIncotermsController::class,'getSapIncoterms'])->name('get_sap_incoterms');
+      // Sap Incoterms Routes....
+      Route::get('get_sap_incoterms',[SapIncotermsController::class,'getSapIncoterms'])->name('get_sap_incoterms');
 
-   		// Sap Payment Terms Routes....
-   		Route::get('get_sap_sales_group',[SapSalesGroupController::class,'getSapSalesGroup'])->name('get_sap_sales_group');
+      // Sap Payment Terms Routes....
+      Route::get('get_sap_sales_group',[SapSalesGroupController::class,'getSapSalesGroup'])->name('get_sap_sales_group');
 
-   		// Sap Sales Organization Controller Routes....
-   		Route::get('get-sap-sales-org',[SalesOrganizationController::class,'getSalesOrgType'])->name('get_sap_sales_org');
+      // Sap Sales Organization Controller Routes....
+      Route::get('get-sap-sales-org',[SalesOrganizationController::class,'getSalesOrgType'])->name('get_sap_sales_org');
 
-   		// Sap Sales Office Controller Routes....
-   		Route::get('get-sales-office',[SalesOfficeController::class,'getSalesOffice'])->name('get_sales_office');
+      // Sap Sales Office Controller Routes....
+      Route::get('get-sales-office',[SalesOfficeController::class,'getSalesOffice'])->name('get_sales_office');
 
-   		// Sap Division Controller Routes....
-   		Route::post('get-sap-division',[DivisionController::class,'getSapDivision'])->name('get_sap_division');
-   		// Sap Distribution Channel Controller Routes....
-   		Route::get('get-distri-channel',[DistributionChannelController::class,'getDistriChannel'])->name('get_distri_channel');
+      // Sap Division Controller Routes....
+      Route::post('get-sap-division',[DivisionController::class,'getSapDivision'])->name('get_sap_division');
+      // Sap Distribution Channel Controller Routes....
+      Route::get('get-distri-channel',[DistributionChannelController::class,'getDistriChannel'])->name('get_distri_channel');
 
-   		// Sap Order Type Controller Routes....
-   		Route::get('get-order-type',[SapOrderTypeController::class,'getOrderType'])->name('get_order_type');
+      // Sap Order Type Controller Routes....
+      Route::get('get-order-type',[SapOrderTypeController::class,'getOrderType'])->name('get_order_type');
 
-   		// Sap Payment Terms Controller Routes....
-   		Route::get('get-sap-payment-terms',[SapPaymentTermsController::class,'getPaymentTerms'])->name('get_sap_payment_terms');
+      // Sap Payment Terms Controller Routes....
+      Route::get('get-sap-payment-terms',[SapPaymentTermsController::class,'getPaymentTerms'])->name('get_sap_payment_terms');
 
-   		// Sap Payment Gurantee Procedure Controller Routes....
-   		Route::get('get-pay-gurantee-pos',[SapPaymentGuranteeProcedureController::class,'getPayGuranteePos'])->name('get_pay_gurantee_pos');
+      // Sap Payment Gurantee Procedure Controller Routes....
+      Route::get('get-pay-gurantee-pos',[SapPaymentGuranteeProcedureController::class,'getPayGuranteePos'])->name('get_pay_gurantee_pos');
          
          // Sap freight partner Controller Routes....
          Route::get('get-freight-partner',[FreightPartnerController::class,'getfreightpartner']);
 
-   		//------------------- End of Sap Routes -------------------//
+      //------------------- End of Sap Routes -------------------//
 
-   		//------------------- Dorder Routes --------------------------//
+      //------------------- Dorder Routes --------------------------//
 
-   		Route::post('store-do',[DoController::class,'storeDo'])->name('store_do');
-   		Route::post('get-do-details',[DoController::class,'getDoDetails'])->name('get_do-details');
-   		 Route::get('get_do_sub_cats/{so_no}',[DoController::class,'getDoSubCats']);
-   		Route::post('get_all_do',[DoController::class,'getAllDo']);
-   		Route::get('get_all_do_for_cus/{id}',[DoController::class,'getAllDoCus']);
-   		Route::get('get_do_by_cus/{id}',[DoController::class,'get_do_by_cus']);
-   		Route::get('get_do_by_cam/{id}',[DoController::class,'get_do_by_cam']);
-   		Route::get('get_all_so',[DoController::class,'get_all_so']);
+      Route::post('store-do',[DoController::class,'storeDo'])->name('store_do');
+      Route::post('get-do-details',[DoController::class,'getDoDetails'])->name('get_do-details');
+       Route::get('get_do_sub_cats/{so_no}',[DoController::class,'getDoSubCats']);
+      Route::post('get_all_do',[DoController::class,'getAllDo']);
+      Route::get('get_all_do_for_cus/{id}',[DoController::class,'getAllDoCus']);
+      Route::get('get_do_by_cus/{id}',[DoController::class,'get_do_by_cus']);
+      Route::get('get_do_by_cam/{id}',[DoController::class,'get_do_by_cam']);
+      Route::get('get_all_so',[DoController::class,'get_all_so']);
          Route::post('validate_do_qty',[DoController::class,'validateDo']);
          Route::post('update-do',[DoController::class,'updateDo'])->name('update_do');
 
          // Route::post('validate_do_qty',[DoSummeryController::class,'doSummary']);
-   		//------------------- End of Dorder Routes --------------------------//
+      //------------------- End of Dorder Routes --------------------------//
 
 
 
@@ -490,13 +498,13 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
    Route::get('demo', [AdminController::class,'demo']);
    Route::post('admin-logout', [AdminController::class,'logout']);
-	Route::post('user_status_update', [AdminController::class,'userStatusUpdate']);
+  Route::post('user_status_update', [AdminController::class,'userStatusUpdate']);
    Route::get('get_all_plants',[SapSummaryController::class,'getAllPlants']);
 
 
 //test
 
-		// Category Routes....
+    // Category Routes....
 
       Route::post('store-category',[CategoryController::class,'storeCategory']);
 
@@ -514,7 +522,7 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
 
 
-		// Sub Category Routes ....
+    // Sub Category Routes ....
 
       Route::post('store-sub-category',[SubCategoryController::class,'storeSubCategory']);
 
@@ -534,7 +542,7 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
       Route::post('sub-category-list-my',[SubCategoryController::class,'subCategoryListMy']);
 
 
-		// Product Routes ....
+    // Product Routes ....
 
       Route::post('store-product',[ProductController::class,'storeProduct']);
 
@@ -552,7 +560,7 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
       Route::get('product-list-my',[ProductController::class,'productListMy']);
 
-		// Product Routes ....
+    // Product Routes ....
 
       Route::post('store-product',[ProductController::class,'storeProduct']);
 
@@ -588,7 +596,7 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
       Route::post('import-excel-freight-charges',[FreightController::class,'importExcelFreightChargesAdmin']);
 
-		// Price Management Routes....
+    // Price Management Routes....
 
       Route::get('get-product-list',[PriceManagementController::class,'getProductList'])->name('get_store_pro_price');
 
@@ -624,7 +632,7 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
 
 
-		// Complain Routs...
+    // Complain Routs...
 
       Route::post('store-complain-category',[ComplainController::class,'storeComplainCategory']);
 
@@ -637,10 +645,10 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
 
 
-		// Product qut upload exl...
+    // Product qut upload exl...
       Route::post('prod-qty-upload-admin',[OrderPlanningController::class,'prodQtyUploadAdmin']);
 
-		// PO Details Routes...
+    // PO Details Routes...
 
       Route::post('get-po-list-admin',[PoDetailsController::class,'getPoDetails'])->name('download_po_details_pdf');
       Route::get('download-po-details-pdf/{id}',[PoDetailsController::class,'downloadPoPdf'])->name('download_po_details_pdf');
@@ -658,6 +666,11 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
       Route::get('unblock-user-admin/{user_id}',[AdminUserManageController::class,'unBlockUserAdmin'])->name('unblock_user_admin');
       Route::get('admin-customer-list',[AdminUserManageController::class,'customerListAdmin'])->name('admin_castomer_list');
       Route::post('admin-customer-details',[AdminUserManageController::class,'customerDetailsAdmin'])->name('admin_castomer_details');
+
+      Route::get('block-castomer-admin-single/{user_id}',[AdminUserManageController::class,'blockCustomerAdminSingle'])->name('block_castomer_admin_single');
+      Route::get('unblock-castomer-admin-single/{user_id}',[AdminUserManageController::class,'UnblockCustomerAdminSingle'])->name('unblock_castomer_admin_single');
+      Route::post('block-castomer-admin-multi',[AdminUserManageController::class,'blockCustomerAdminMulti'])->name('block_castomer_admin_multi');
+
       //------------------Portal Register Customer-----------------------
         Route::get('admin-portal-customer-list',[AdminUserManageController::class,'portalCustListAdmin'])->name('admin_portal_castomer_list');
         Route::post('admin-up-cust-sap-code',[AdminUserManageController::class,'adminUpCustSapCode'])->name('admin_up-_cust_sap_code');
