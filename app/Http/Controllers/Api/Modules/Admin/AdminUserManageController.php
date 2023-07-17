@@ -205,6 +205,98 @@ class AdminUserManageController extends Controller
     }
 
     /**
+     * This is for block user in admin. 
+     * @param  \App\Product  $product
+     * @return \Illuminate\Http\Response
+    */
+    public function blockCustomerAdminSingle(Request $request,$user_id)
+    {
+      try{   
+
+          $getuser = User::where('id',$user_id)->first();
+            if(!empty($getuser))
+            { 
+            $input['user_status'] = 3;  
+
+              $updateuser = User::where('id',$getuser->id)->update($input);
+
+     
+              return response()->json(['status'=>1,'message' =>'User block successfully.']);
+               
+            }
+            else
+            {
+                return response()->json(['status'=>0,'message'=>'No data found'],200);
+            } 
+             
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+
+    }
+
+    /**
+     * This is for block user in admin. 
+     * @param  \App\Product  $product
+     * @return \Illuminate\Http\Response
+    */
+    public function UnblockCustomerAdminSingle(Request $request,$user_id)
+    {
+      try{   
+          
+          $getuser = User::where('id',$user_id)->first();
+            if(!empty($getuser))
+            { 
+            $input['user_status'] = 2;  
+
+              $updateuser = User::where('id',$getuser->id)->update($input);
+
+     
+              return response()->json(['status'=>1,'message' =>'User block successfully.']);
+               
+            }
+            else
+            {
+                return response()->json(['status'=>0,'message'=>'No data found'],200);
+            } 
+             
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+
+    }
+
+    /**
+     * This is for block user in admin. 
+     * @param  \App\Product  $product
+     * @return \Illuminate\Http\Response
+    */
+    public function blockCustomerAdminMulti(Request $request)
+    {
+      try{   
+ 
+
+          $cust_id = $request->all(); 
+            
+          $input['user_status'] = 3;  
+
+          $updateuser = User::whereIn('id',$cust_id)->update($input);
+
+ 
+          return response()->json(['status'=>1,'message' =>'Users block successfully.']);
+               
+            
+             
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+
+    }
+
+    /**
       * This for customer details admin.
       *
       * @param  \App\Product  $product
