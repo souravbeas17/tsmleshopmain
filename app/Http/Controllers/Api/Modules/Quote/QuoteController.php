@@ -3030,7 +3030,9 @@ class QuoteController extends Controller
    // -------------------------------------------------------------------------------------
       public function getPoSchedulesBySche($qid,$orsche)
       {  
-          // dd($orsche); 
+
+          $sche = explode(",",$orsche);
+          // dd($sche); 
           $quote_sches = array();
 
           $res = DB::table('quote_schedules')
@@ -3041,7 +3043,7 @@ class QuoteController extends Controller
           ->where('quote_schedules.quote_id',$qid);
           if(!empty($orsche) && isset($orsche))
           {
-             $res = $res->where('quote_schedules.schedule_no',$orsche);
+             $res = $res->whereIn('quote_schedules.schedule_no',$sche);
           }
           $res = $res->where('quote_schedules.quote_status',1)->whereNull('quote_schedules.deleted_at')->get();
 
