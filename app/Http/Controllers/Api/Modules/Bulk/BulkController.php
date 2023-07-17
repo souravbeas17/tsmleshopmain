@@ -61,6 +61,7 @@ class BulkController extends Controller
                 $user->org_address = $val[6];
                 $user->user_type = 'C';
                 $user->login_attempt = 2;
+                $user->user_status = 2;
                 $user->company_pan = $val[200];
                 $user->addressone = $val[6];
                 $user->zone = $val[10];

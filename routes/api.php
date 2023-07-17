@@ -64,6 +64,7 @@ use App\Http\Controllers\Api\Modules\Admin\CronSchedulerController;
 use App\Http\Controllers\Api\Modules\Admin\AdminNotificationController;
 
 use App\Http\Controllers\Api\Modules\PoOptController;
+use App\Http\Controllers\Api\Modules\Quote\PoeditController;
 
 /*
 |--------------------------------------------------------------------------
@@ -204,7 +205,7 @@ Route::get('so-excel-download/{contract_no?}',[SoTemporaryController::class,'SoE
    Route::post('cam-rfqsubmit-behalf-cust',[OrderManagementController::class,'camEfqsubmitBehalfCust'])->name('cam_rfqsubmit_behalf_cust');
 // ---------------------------------------------------------------------------------------
 
-Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmiddleware']],function ()
+Route::group(['prefix' => 'user'],function ()
 {
    Route::get('get_all_po_opt',[PoOptController::class,'getAllPoOpt']);
 
@@ -240,6 +241,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
    		 Route::get('get_quote_po_by_id/{id}',[QuoteController::class,'getPoQuoteById']);
    		 Route::post('submit_po',[QuoteController::class,'submitPo']);
        Route::post('submit_po_new',[QuoteController::class,'submitPoNew']);
+       Route::post('submit_po_mul',[QuoteController::class,'submitPoMultipleok']);
    		 Route::get('get_po_by_id/{id}',[QuoteController::class,'getPoById']);
    		 Route::get('get_po_all',[QuoteController::class,'getPoAll']);
    		 Route::get('get_po_all_kam',[QuoteController::class,'getPoAllKam']);
@@ -266,6 +268,12 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 
           Route::post('submit_remarks',[RemarkController::class,'submitremarks']);
           Route::get('get_rfq_st/{rfq_no}',[QuoteController::class,'getRfqSt']);
+
+      // ----------------- po edit -------------------------------------------------
+
+      Route::post('po_edit_multiple',[PoeditController::class,'poEditMultiple']);
+      Route::post('po_update_sche',[PoeditController::class,'poUpdateSche']);
+      // ---------------------------------------------------------------------------
 
    		 Route::post('get-store-pro-price',[PriceManagementController::class,'getProPrice'])->name('get_store_pro_price');
    		 Route::get('get-threshold-price',[PriceManagementController::class,'getThresholdPrice'])->name('get_threshold_price');
