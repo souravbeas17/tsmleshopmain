@@ -204,7 +204,7 @@ Route::get('so-excel-download/{contract_no?}',[SoTemporaryController::class,'SoE
    Route::post('cam-rfqsubmit-behalf-cust',[OrderManagementController::class,'camEfqsubmitBehalfCust'])->name('cam_rfqsubmit_behalf_cust');
 // ---------------------------------------------------------------------------------------
 
-Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmiddleware']],function ()
+Route::group(['prefix' => 'user'],function ()
 {
    Route::get('get_all_po_opt',[PoOptController::class,'getAllPoOpt']);
 
@@ -464,6 +464,8 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
     //  });
           Route::get('onbehalf_category',[PoOptController::class,'onbehalfCategory']);
           Route::post('onbehalf_category_add',[PoOptController::class,'onbehalfCategoryAdd']);
+          Route::get('get_cam_customer',[PoOptController::class,'getCamCustomer']);
+          Route::get('get_rejected_order',[PoOptController::class,'getRejectedOrder']);
 
 });
 
@@ -685,6 +687,8 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
      Route::get('clear_notifcation_all',[AdminNotificationController::class,'clearNotifcationAll']);
      Route::get('clear_notifcation/{id}',[AdminNotificationController::class,'clearNotifcation']);
     // ------------------------------------------------------------------------------------------
+
+     Route::get('get_rejected_order_admin',[PoOptController::class,'getRejectedOrderAdmin']);
 
 });
 

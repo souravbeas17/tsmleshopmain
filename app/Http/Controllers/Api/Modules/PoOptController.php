@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Models\OnBehalfCategory;
 use DB;
+use Auth;
 
 class PoOptController extends Controller
 {
@@ -120,5 +121,79 @@ class PoOptController extends Controller
         	return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
     	}
 	}
+
+	
+public function getCamCustomer()
+    {
+    	try
+    	{
+	    	$user_id = Auth::user()->id;
+	    	$user = DB::table('users')->where('id',$user_id)->first();
+		    $kam_users = DB::table('users')->where(['user_type' => "Kam",'zone' => $user->zone])->first();
+
+		    return response()->json(['status'=>1,'message' =>'Customer Zone wise Kam users list.','result' => $kam_users],200);
+		}catch(\Exception $e){
+        	return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+    	}
+    	
+    }
+    public function getRejectedOrder()
+    {
+    	try
+    	{
+	    	
+    		$user = Auth::user();
+    		$user_id = $user->id;
+    		$user_zone =  $user->zone;
+    		$user_type =  $user->user_type;
+    		if( $user_type == 'Kam' ){
+    			$results  = DB::table('quotes')
+	            ->leftjoin('quote_schedules','quote_schedules.quote_id','quotes.id')
+	            ->leftjoin('users','quotes.user_id','users.id')
+	            ->leftjoin('products','quotes.product_id','products.id')
+	            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','products.pro_name')
+	            ->where('users.zone',$user_zone)
+	            ->groupBy('schedule_no')
+	            ->orderBy('quotes.created_at','desc')
+	            ->get()->toArray();
+    		}else{
+    			$results  = DB::table('quotes')
+	            ->leftjoin('quote_schedules','quote_schedules.quote_id','quotes.id')
+	            ->leftjoin('products','quotes.product_id','products.id')
+	            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','products.pro_name')
+	            ->groupBy('schedule_no')
+	            ->orderBy('quotes.created_at','desc')
+	            ->get()->toArray();
+    		}
+            
+            
+		    return response()->json(['status'=>1,'message' =>'Rejected orders.','result' => $results],200);
+		}catch(\Exception $e){
+        	return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+    	}
+    	
+    }
+
+    public function getRejectedOrder()
+    {
+    	try
+    	{
+			$results  = DB::table('quotes')
+            ->leftjoin('quote_schedules','quote_schedules.quote_id','quotes.id')
+            ->leftjoin('products','quotes.product_id','products.id')
+            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','products.pro_name')
+            ->groupBy('schedule_no')
+            ->orderBy('quotes.created_at','desc')
+            ->get()->toArray();
+    		
+            
+            
+		    return response()->json(['status'=>1,'message' =>'Rejected orders admin.','result' => $results],200);
+		}catch(\Exception $e){
+        	return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+    	}
+    	
+    }
+
 
 }
