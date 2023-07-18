@@ -171,7 +171,7 @@ class AdminUserManageController extends Controller
               $data = User::orderBy('id','desc')
                               ->where('name','LIKE',"%{$request->cust_name}%") 
                               ->where('user_type','=','C') 
-                              ->where('reg_by','=','U') 
+                              // ->where('reg_by','=','U') 
                               ->get();
           }
            
@@ -182,7 +182,7 @@ class AdminUserManageController extends Controller
               //             ->get();
               $data = User::orderBy('id','desc')
                           ->where('user_type','=','C')
-                          ->where('reg_by','=','U') 
+                          // ->where('reg_by','=','U') 
                           ->get();
           }
           
@@ -276,11 +276,12 @@ class AdminUserManageController extends Controller
     public function blockCustomerAdminMulti(Request $request)
     {
       try{   
- 
+          // dd('ok');
 
-          $cust_id = $request->all(); 
-            
-          $input['user_status'] = 3;  
+          $cust_id = $request->userIds; 
+          // dd($cust_id);
+
+          $input['user_status'] = $request->status;  
 
           $updateuser = User::whereIn('id',$cust_id)->update($input);
 
