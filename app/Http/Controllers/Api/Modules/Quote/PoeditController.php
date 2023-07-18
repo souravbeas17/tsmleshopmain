@@ -55,6 +55,7 @@ class PoeditController extends Controller
       	   $arr['remarks'] = $value['remarks'];
       	   $arr['kamsRemarks'] = $value['kamsRemarks'];
       	   $arr['expected_price'] = $value['expected_price'];
+      	   $arr['kam_price'] = $value['kam_price'];
       	   $arr['delivery'] = $value['delivery'];
       	   $arr['plant'] = $value['plant'];
       	   $arr['valid_till'] = $value['valid_till'];
