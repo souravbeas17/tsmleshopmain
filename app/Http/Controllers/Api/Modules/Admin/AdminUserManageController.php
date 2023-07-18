@@ -191,8 +191,10 @@ class AdminUserManageController extends Controller
             {               
               $catdata['user_id'] = $value->id;
               $catdata['user_code'] = $value->user_code;
+              $catdata['reg_by'] = $value->reg_by;
               $catdata['email'] = $value->email;
-              $catdata['name'] = $value->name; 
+              $catdata['name'] = $value->name;
+              $catdata['status'] = $value->user_status; 
               $catelist[] = $catdata;
             } 
           return response()->json(['status'=>1,'message' =>'success.','result' => $catelist],200);
