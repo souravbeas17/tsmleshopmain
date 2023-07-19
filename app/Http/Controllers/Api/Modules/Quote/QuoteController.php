@@ -1815,7 +1815,7 @@ class QuoteController extends Controller
             $result[$key]['user_id'] = $value->user_id;
             $result[$key]['rfq_no'] = $value->rfq_no;
             $result[$key]['rfq_type'] = $value->rfq_type;
-            $result[$key]['quantity'] = $value->quantity;
+            $result[$key]['quantity'] = (isset($value->orsche)) ? $this->getSchequantity($value->orsche): $value->quantity;
             $result[$key]['po_no'] = $value->po_no;
             $result[$key]['cus_po_no'] = $value->cus_po_no;
             $result[$key]['otype'] = $value->otype;
@@ -1944,7 +1944,7 @@ class QuoteController extends Controller
            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
            // ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
            ->leftjoin('users','quotes.user_id','users.id')
-           ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status','orders.amdnt_no','orders.cus_po_no')
+           ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status','orders.amdnt_no','orders.cus_po_no','orders.sche as orsche','quotes.id as qid')
            ->orderBy('quotes.updated_at','desc');
            // ->groupBy('quotes.rfq_no');
            if(!empty($user_id))
@@ -1963,12 +1963,13 @@ class QuoteController extends Controller
           if(!empty($quote))
           {
           foreach ($quote as $key => $value) {
+            
 
             $result[$key]['po_no'] = $value->po_no;
             $result[$key]['cus_po_no'] = $value->cus_po_no;
             $result[$key]['user'] = $value->name;
             $result[$key]['rfq_no'] = $value->rfq_no;
-            // $result[$key]['quantity'] = $value->tot_qt;
+            $result[$key]['quantity'] = (isset($value->orsche)) ? $this->getSchequantity($value->orsche): $this->getSchequantitysum($value->qid);
             $result[$key]['amdnt_no'] = $value->amdnt_no;
             $date =  date_create($value->po_date);
             $po_dt = date_format($date,"d/m/Y");
@@ -3089,5 +3090,48 @@ class QuoteController extends Controller
           return $quote_sches;
       }
       // -----------------------------------------------------------------
+
+      public function getSchequantity($orsche)
+      {
+          $sche = explode(",",$orsche);
+          // dd($sche); 
+          $sum = 0;
+          $quote_sches = array();
+
+          $res = DB::table('quote_schedules')
+          ->select('quote_schedules.quantity')
+          ->whereIn('quote_schedules.schedule_no',$sche)
+          ->where('quote_schedules.quote_status',1)
+          ->whereNull('quote_schedules.deleted_at')->get();
+
+          foreach ($res as $key => $value) {
+            
+                $sum += $value->quantity;
+          }
+
+          // dd($sum);
+          return $sum;
+      }
+
+      public function getSchequantitysum($rfq)
+      {
+          
+          $sum = 0;
+
+
+          $res = DB::table('quote_schedules')
+          ->select('quote_schedules.quantity')
+          ->where('quote_schedules.quote_id',$rfq)
+          ->where('quote_schedules.quote_status',1)
+          ->whereNull('quote_schedules.deleted_at')->get();
+
+          foreach ($res as $key => $value) {
+            
+                $sum += $value->quantity;
+          }
+
+          // dd($sum);
+          return $sum;
+      }
 
 }
