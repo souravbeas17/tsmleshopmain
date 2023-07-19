@@ -10,6 +10,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\ThresholdExport;
 use App\Models\User;
 use App\Models\Models\Product;
+use App\Models\Models\Plant;
 use App\Models\Models\Category;
 use App\Models\Models\ProductSubCategory;
 use App\Models\Models\PriceManagement;
@@ -778,7 +779,15 @@ class PriceManagementController extends Controller
             if ($validator->fails()) { 
                 return response()->json(['status'=>0,'message' =>config('global.failed_msg'),'result' => $validator->errors()],config('global.failed_status'));
             }
-            $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$decrypted['sub_cat_id'])->where('size',$decrypted['size'])->first();
+
+            $getPlantCode = Plant::select('type_2')->where('name',$decrypted['plantName'])->first();
+             
+            $gerSubCatName = ProductSubCategory::select('sub_cat_name')->where('id',$decrypted['sub_cat_id'])->first(); 
+
+            $getsucatid = ProductSubCategory::where('sub_cat_name',$gerSubCatName->sub_cat_name)->where('plant_code',$getPlantCode->type_2)->first();
+            
+
+            $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$getsucatid->id)->where('size',$decrypted['size'])->first();
             // dd($priceData);
             // if(isset($request->location))
             // {

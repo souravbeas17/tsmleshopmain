@@ -164,40 +164,51 @@ class AdminUserManageController extends Controller
     { 
       $response = [];
         try{         
-          
-          if($request->cust_name)
-          {      
+            
+            $page = $request->page;
+            $limit = $request->limit;
+
+            if(empty($request->page) ){
+                $page = 1;
+            }
+            if(empty( $request->limit) ){
+                $limit = 10;
+            }
+            $offset = 0;
+            if( $page > 1 ){
+                $offset = ($page - 1) * $limit;
+            }
+            if( $request->cust_name)
+            {      
              
-              $data = User::orderBy('id','desc')
-                              ->where('name','LIKE',"%{$request->cust_name}%") 
-                              ->where('user_type','=','C') 
-                              // ->where('reg_by','=','U') 
-                              ->get();
-          }
-           
-          else{
-              // $data = DB::table('users')
-              //             ->leftjoin('address','users.id','address.user_id')                           
-              //             ->select('users.id as user_id','users.id as user_id''address.*')
-              //             ->get();
-              $data = User::orderBy('id','desc')
-                          ->where('user_type','=','C')
-                          // ->where('reg_by','=','U') 
-                          ->get();
-          }
-          
-          $catelist = [];
-            foreach ($data as $key => $value) 
-            {               
-              $catdata['user_id'] = $value->id;
-              $catdata['user_code'] = $value->user_code;
-              $catdata['reg_by'] = $value->reg_by;
-              $catdata['email'] = $value->email;
-              $catdata['name'] = $value->name;
-              $catdata['status'] = $value->user_status; 
-              $catelist[] = $catdata;
-            } 
-          return response()->json(['status'=>1,'message' =>'success.','result' => $catelist],200);
+                $catelist = User::orderBy('id','desc')
+                    ->select('id as user_id','user_code','reg_by','email','name','user_status as status')
+                    ->where('name','LIKE',"%{$request->cust_name}%") 
+                    ->where('user_type','=','C') 
+                    ->offset($offset)->limit($limit)
+                    ->get()->toArray();
+
+                    $totalData = User::orderBy('id','desc')
+                    ->select('id as user_id','user_code','reg_by','email','name','user_status as status')
+                    ->where('name','LIKE',"%{$request->cust_name}%") 
+                    ->where('user_type','=','C') 
+                    ->count();
+            }else{
+                $catelist = User::orderBy('id','asc')
+                    ->select('id as user_id','user_code','reg_by','email','name','user_status as status')
+                    ->where('user_type','=','C')
+                    ->offset($offset)->limit($limit)
+                    ->get()->toArray();
+
+                $totalData = User::orderBy('id','asc')
+                    ->select('id as user_id','user_code','reg_by','email','name','user_status as status')
+                    ->where('user_type','=','C') 
+                    ->count();
+            }
+
+            
+         
+          return response()->json(['status'=>1,'message' =>'success.','result' => $catelist,'totalData'=>$totalData],200);
           
         
         }catch(\Exception $e){
