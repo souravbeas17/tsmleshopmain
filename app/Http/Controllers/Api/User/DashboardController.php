@@ -327,8 +327,8 @@ class DashboardController extends Controller
    		 	$volumeCon = DB::table('quotes')
    		 	 	->select('quantity') 
 	            ->where('quotes.kam_status',4)
-	            ->whereDatewhereDate('quotes.created_at','>=', $fromdate)
-                ->whereDatewhereDate('quotes.created_at','<=', $todate) 
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+                ->whereDate('quotes.created_at','<=', $todate) 
 	            ->whereNull('quotes.deleted_at') 
 	            ->sum('quotes.quantity');	         
 	        $data['volumeconfirmed'] = $volumeCon;
