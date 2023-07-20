@@ -642,10 +642,11 @@ class OrderManagementController extends Controller
           
             $quote = DB::table('quote_schedules')
            ->leftjoin('quotes','quote_schedules.quote_id','quotes.id')
+           ->leftjoin('sub_categorys','sub_categorys.id','quote_schedules.sub_cat_id')
            ->leftjoin('orders','quotes.rfq_no','orders.rfq_no')
            ->leftjoin('rfq_status_refs','quotes.kam_status','rfq_status_refs.status')
            ->leftjoin('users','quotes.user_id','users.id')
-           ->select('quotes.rfq_no','quotes.user_id','users.org_name','orders.status','quotes.updated_at','quote_schedules.quantity as scheqty','quote_schedules.plant','quote_schedules.pro_size','rfq_status_refs.st_text','quote_schedules.schedule_no')
+           ->select('quotes.rfq_no','quotes.user_id','users.org_name','orders.status','quotes.updated_at','quote_schedules.quantity as scheqty','quote_schedules.plant','quote_schedules.pro_size','rfq_status_refs.st_text','quote_schedules.schedule_no','sub_categorys.sub_cat_name','quote_schedules.kam_price','quotes.created_at')
            ->orderBy('quote_schedules.updated_at','desc');
            // ->groupBy('quotes.rfq_no');
            
@@ -686,6 +687,11 @@ class OrderManagementController extends Controller
             $result[$key]['plant'] = $value->plant;
             $result[$key]['size'] = $value->pro_size;
             $result[$key]['tentative'] = $this->tentative($value->schedule_no);
+            $result[$key]['sub_cat_name'] = $value->sub_cat_name;
+            $result[$key]['kam_price'] = $value->kam_price;
+            $r_date =  date_create($value->created_at);
+            $r_dt = date_format($r_date,"d/m/Y");
+            $result[$key]['rfq_date'] = $r_dt;
 
 
           }
