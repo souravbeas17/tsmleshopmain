@@ -49,11 +49,13 @@ class DashboardController extends Controller
 			    $fromdate = $year.'-'.'04'.'-'.'01';
 			    $todate = date("Y-m-d");
 			}
-   		 
+   		 // dd($fromdate,$todate);
    		 if ($getuser->user_type == 'C') {
    		 	$quote = DB::table('orders')
             ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')            
             ->where('quotes.user_id',$userid)
+            ->whereDate('quotes.created_at','>=', $fromdate)
+			->whereDate('quotes.created_at','<=', $todate) 
             ->whereNull('quotes.deleted_at')
             ->count();
 	        $data['total_no_of_orders'] = $quote;
@@ -61,6 +63,8 @@ class DashboardController extends Controller
 	         $rfqNego = DB::table('quotes') 
 	            ->where('quotes.user_id',$userid)
 	            ->where('quotes.kam_status',6)
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+			    ->whereDate('quotes.created_at','<=', $todate) 
 	            ->whereNull('quotes.deleted_at')
 	            ->count();
 	        $data['rfq_under_negotiation'] = $rfqNego;
@@ -68,6 +72,8 @@ class DashboardController extends Controller
 	        $orderCon = DB::table('orders')
 	            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')             
 	            ->where('quotes.user_id',$userid)
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+			    ->whereDate('quotes.created_at','<=', $todate)
 	            ->where('orders.status',1)
 	            ->whereNull('quotes.deleted_at')
 	            ->count();
@@ -215,6 +221,8 @@ class DashboardController extends Controller
             ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')  
             ->leftjoin('users','quotes.user_id','users.id')           
             ->where('users.zone',$getuser->zone)
+            ->whereDate('orders.created_at','>=', $fromdate)
+            ->whereDate('orders.created_at','<=', $todate)
             ->whereNull('quotes.deleted_at')
             ->count();
 	        $data['total_no_of_orders'] = $quote;
@@ -229,6 +237,8 @@ class DashboardController extends Controller
 	        $orderCon = DB::table('orders')
 	            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')             
 	            ->leftjoin('users','quotes.user_id','users.id')
+	            ->whereDate('orders.created_at','>=', $fromdate)
+            	->whereDate('orders.created_at','<=', $todate)
 	            ->where('orders.status',1)
 	            ->where('users.zone',$getuser->zone)
 	            ->whereNull('quotes.deleted_at')
@@ -237,6 +247,8 @@ class DashboardController extends Controller
 
 	        $rfqNego = DB::table('quotes') 
 	            ->leftjoin('users','quotes.user_id','users.id')
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+            	->whereDate('quotes.created_at','<=', $todate)
 	            ->where('quotes.kam_status',6)
 	            ->where('users.zone',$getuser->zone)
 	            ->whereNull('quotes.deleted_at')
@@ -246,6 +258,8 @@ class DashboardController extends Controller
 	        $custComplain = DB::table('complain_main') 
 	        	->leftjoin('users','complain_main.user_id','users.id')
 	            ->where('users.zone',$getuser->zone)
+	            ->whereDate('complain_main.created_at','>=', $fromdate)
+            	->whereDate('complain_main.created_at','<=', $todate)
 	            ->where('complain_main.closed_status',1) 
 	            ->count();
 
@@ -256,13 +270,17 @@ class DashboardController extends Controller
 
 	        
             $ytddata = array();
+
 	        $ytd = DB::table('orders')
 	               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
 	               ->leftjoin('users','quotes.user_id','users.id') 
 	               ->select('users.org_name','users.id as custid','quotes.rfq_no','quotes.id') 
+	               ->whereDate('orders.created_at','>=', $fromdate)
+            	   ->whereDate('orders.created_at','<=', $todate)
 	               ->where('users.zone',$getuser->zone)
 	               ->whereNull('quotes.deleted_at')
 	               ->where('orders.status',2)  
+	               ->groupBy('orders.rfq_no')
 	               ->get();
 
 	        
@@ -322,7 +340,7 @@ class DashboardController extends Controller
 	        // ----------------------------------------------------------
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM'|| $getuser->user_type == 'OPT') { 
-
+   		 	// dd($fromdate,$todate);
    		 	// Show data according to financial year.....
    		 	$volumeCon = DB::table('quotes')
    		 	 	->select('quantity') 
