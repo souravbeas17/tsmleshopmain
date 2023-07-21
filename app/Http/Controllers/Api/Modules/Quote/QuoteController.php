@@ -629,10 +629,11 @@ class QuoteController extends Controller
 
          $quotes = DB::table('quotes')->leftjoin('users','quotes.user_id','users.id')
          ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+         ->leftjoin('cam_rfq_submit','quotes.rfq_no','cam_rfq_submit.rfq_no')
          ->leftjoin('products','quotes.product_id','products.id')
          ->leftjoin('categorys','quotes.cat_id','categorys.id')
          ->leftjoin('sub_categorys','categorys.id','sub_categorys.cat_id')
-         ->select('quotes.*','users.name',DB::raw('SUM(quotes.quantity) as tot_qt'),'products.pro_desc','quotes.rfq_no','categorys.cat_name','sub_categorys.sub_cat_name','categorys.primary_image')
+         ->select('quotes.*','users.name',DB::raw('SUM(quotes.quantity) as tot_qt'),'products.pro_desc','quotes.rfq_no','categorys.cat_name','sub_categorys.sub_cat_name','categorys.primary_image','cam_rfq_submit.remarks as reason')
          // ->where('quotes.kam_status','!=',4)
          ->groupBy('quotes.rfq_no')
          ->orderBy('quotes.created_at','desc')
@@ -662,6 +663,7 @@ class QuoteController extends Controller
           $quoteArr[$key]['cat_name'] = $value->cat_name;
           $quoteArr[$key]['sub_cat_name'] = $value->sub_cat_name;
           $quoteArr[$key]['pro_desc'] = $value->pro_desc;
+          $quoteArr[$key]['reason'] = $value->reason;
           $quoteArr[$key]['quote_type'] = $value->quote_type;
           $quoteArr[$key]['status'] = $this->schedule_status($value->rfq_no);
           $quoteArr[$key]['dash_dt'] = date('jS F, Y',strtotime($value->created_at));
