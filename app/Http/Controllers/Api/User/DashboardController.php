@@ -70,7 +70,7 @@ class DashboardController extends Controller
 			else{
 			    $fromdate = date("Y-04-01"); 
 			}
-			$todate = date("Y-04-t");
+			$todate = date("Y-m-t");
    		}
 
 
