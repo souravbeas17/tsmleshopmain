@@ -63,14 +63,15 @@ class DashboardController extends Controller
 				$fromdate = date("Y-m-01");
 			}
    		}else{
-   			if ( date('m') <= 03 ) {
-		 		$preyear = date("Y",strtotime("-1 year"));
-		 		$fromdate = date($preyear."-04-01");
-			}
-			else{
-			    $fromdate = date("Y-04-01"); 
-			}
-
+   // 			if ( date('m') <= 03 ) {
+		 // 		$preyear = date("Y",strtotime("-1 year"));
+		 // 		$fromdate = date($preyear."-04-01");
+			// }
+			// else{
+			//     $fromdate = date("Y-04-01"); 
+			// }
+			$fromdate = date("Y-04-01"); 
+			$todate = date("Y-04-t");
    		}
 
 
