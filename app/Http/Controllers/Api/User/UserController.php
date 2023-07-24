@@ -973,7 +973,7 @@ class UserController extends Controller
         if (empty($chkemail)) 
         {
             
-              return response()->json(['status'=>1,'message' =>'success']);
+              return response()->json(['status'=>0,'message' =>'No record found.']);
 
         }
         else
