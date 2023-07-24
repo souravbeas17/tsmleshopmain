@@ -22,6 +22,7 @@ use Mail;
 use DB;
 use DateTime;
 use Nullix\CryptoJsAes\CryptoJsAes;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -152,8 +153,11 @@ class AuthController extends Controller
                     // $dtime =  date('Y-m-d h:i:s', $endTime);
                     // dd($datestime,$dtime);
 
-                     
+                    // User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+                    
                     $inputotp['otp_expires_time'] =$datestime; 
+                    $inputotp['forgot_pass_date'] = null; 
+                    $inputotp['forgot_pass_count'] = 0; 
                     $categoryData = User::where('email',$decrypted['email'])->update($inputotp); 
                     $sub = "OTP For Login";
                     $html = 'mail.Otpverificationmail';
@@ -768,12 +772,37 @@ class AuthController extends Controller
 
         $data['email'] = $decrypted['email'];
         $user = User::where('email',$decrypted['email'])->first();
-         
+
+          if(!empty($user->forgot_pass_date)){
+            $datestime = date("Y-m-d H:i:s");
+            $forgot_pass_date = $user->forgot_pass_date;
+
+            $timestamp1 = strtotime($datestime);
+            $timestamp2 = strtotime($forgot_pass_date);
+            $hour = abs($timestamp2 - $timestamp1)/(60*60);
+
+            if ($hour>24) 
+            {
+               // dd($hour);
+              User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+            }
+          }
+          
+
+          // dd($datestime,$forgot_pass_date,$hour);
+
         if(!@$user){
             $response['error']['message'] = "No record found.";
             return Response::json($response); 
         }
         if ($user->user_status == 3) {
+         // $userdata['login_attempt'] = $chkuserd->login_attempt;
+          // dd('ji');
+          $response['error']['message'] = "Your account is block please contact admin.";
+            return Response::json($response);
+         
+         }
+         if ($user->forgot_pass_count == 3 && $hour<24 ) {
          // $userdata['login_attempt'] = $chkuserd->login_attempt;
           // dd('ji');
           $response['error']['message'] = "Your account is block please contact admin.";
@@ -786,27 +815,40 @@ class AuthController extends Controller
         // $endTime = strtotime("+3 minutes", strtotime($datestime));
         // $dtime =  date('Y-m-d h:i:s', $endTime);
         // dd($datestime,$dtime);
+           $getuser =  User::where('email',$decrypted['email'])->first();
+           // dd($getuser->forgot_pass_count);
+           $forgot_pass_count = $getuser->forgot_pass_count+1;
+            // dd($forgot_pass_count);
 
-         
-         
-          $vcode = random_int(100000, 999999); 
+           
+            $vcode = random_int(100000, 999999); 
           
-          User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime]);
+            User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_count'=>$forgot_pass_count,]);
+
+            if ($forgot_pass_count == 3) 
+            {
+               User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_date'=>$datestime,]);
+            }
+
+            $mailSub = 'Forgot Password';
+            $mailTemplateBlade = 'mail.forgot_password'; 
+            $sentTo = $user->email;
+            $mailData['OTP'] = $vcode;
+            $mailData['name'] = $user->name; 
+             // dd($mailData);
+            (new MailService)->dotestMail($mailSub,$mailTemplateBlade,$sentTo,$mailData);
+             
+            
+            // Mail::send(new ForgotPasswordMail($data));
+            return response()->json(['status'=>1,'message' =>'A OTP send to your email address for reset your password .'],200);
+          
+          
+
           // $data['OTP'] =  $vcode;
           // $data['name'] = $user->name;
           // $data['email'] = $user->email;
 
-          $mailSub = 'Forgot Password';
-          $mailTemplateBlade = 'mail.forgot_password'; 
-          $sentTo = $user->email;
-          $mailData['OTP'] = $vcode;
-          $mailData['name'] = $user->name; 
-           // dd($mailData);
-          (new MailService)->dotestMail($mailSub,$mailTemplateBlade,$sentTo,$mailData);
-           
           
-          // Mail::send(new ForgotPasswordMail($data));
-          return response()->json(['status'=>1,'message' =>'A OTP send to your email address for reset your password .'],200);
 
         }
          

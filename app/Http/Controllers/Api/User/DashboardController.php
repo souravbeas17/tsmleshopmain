@@ -31,7 +31,10 @@ class DashboardController extends Controller
     */
    public function userDashboard(Request $request)
    {
-   	  
+   		  	
+   	 //  	echo 'First Date    = ' . date('Y-m-01') . '<br />';
+    	// echo 'Last Date     = ' . date('Y-m-t')  . '<br />';
+    	// exit();
    		$userid = $request->user_id;
 
    		$getuser = User::where('id',$userid)->first();
