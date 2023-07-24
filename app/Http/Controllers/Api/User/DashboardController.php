@@ -46,11 +46,11 @@ class DashboardController extends Controller
    		$todate = date("Y-m-d");
 
    		if( $request->graph == 'yearly' ){
-   			if ( date('m') <= 03 ) {
-		 		$preyear = date("Y",strtotime("-1 year"));
-		 		$fromdate = date($preyear."-04-01");
-			}
-			else{
+   			if ($request->fromdatem && $request->todatem) 
+			{
+				$fromdate = $request->fromdatem;
+				$todate = $request->todatem;
+			}else{
 			    $fromdate = date("Y-04-01"); 
 			}
 
