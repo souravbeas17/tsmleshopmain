@@ -39,16 +39,16 @@ class DashboardController extends Controller
    		// dd($getuser);
    		// C -- Customer
    		// Kam -- cam
+   		$todate = date("Y-m-d");
+
    		if ( date('m') <= 03 ) {
-   		 		$preyear = date("Y",strtotime("-1 year"));
-   		 		$fromdate = $preyear.'-'.'04'.'-'.'01';
-			    $todate = date("Y-m-d");
-			}
-			else {
-				$year = date("Y");
-			    $fromdate = $year.'-'.'04'.'-'.'01';
-			    $todate = date("Y-m-d");
-			}
+	 		$preyear = date("Y",strtotime("-1 year"));
+	 		$fromdate = date($preyear."-04-01");
+		}
+		else {
+		    $fromdate = date("Y-04-01"); 
+		}
+
    		 // dd($fromdate,$todate);
    		 if ($getuser->user_type == 'C') {
    		 	$quote = DB::table('orders')
@@ -147,20 +147,14 @@ class DashboardController extends Controller
 
 			$data['ex_work_confirmed_orders'] = $exworkcons;
 
-		    $fromdatem = date("Y").'-'.date('m').'-'.'01';
-			$todatem = date("Y-m-d");
-	         
-	         
-
-	         // dd($fromdatem,$todatem);
 
 			$volumeConPlant = DB::table('quote_schedules')
    		 					->leftjoin('quotes','quote_schedules.quote_id','quotes.id')
    		 					->where('quote_schedules.plant',$orgname)
    		 					// ->where('quote_schedules.pickup_type','=',$plantId->type) 
    		 					->where('quotes.kam_status',4)
-				            ->whereDate('quotes.created_at','>=', $fromdatem)
-			                ->whereDate('quotes.created_at','<=', $todatem) 
+				            ->whereDate('quotes.created_at','>=', $fromdate)
+			                ->whereDate('quotes.created_at','<=', $todate) 
 				            ->whereNull('quotes.deleted_at') 
 				            ->select('quote_schedules.id') 
 				            ->sum('quote_schedules.quantity');	      
@@ -174,8 +168,8 @@ class DashboardController extends Controller
    		 					->where('quote_schedules.plant',$orgname)
    		 					->where('quote_schedules.delivery','=','DAP (Delivered at Place)') 
    		 					->where('quotes.kam_status',4)
-				            ->whereDate('quotes.created_at','>=', $fromdatem)
-			                ->whereDate('quotes.created_at','<=', $todatem) 
+				            ->whereDate('quotes.created_at','>=', $fromdate)
+			                ->whereDate('quotes.created_at','<=', $todate) 
 				            ->whereNull('quotes.deleted_at') 
 				            ->select('quote_schedules.id') 
 				            ->sum('quote_schedules.quantity');	      
@@ -340,6 +334,16 @@ class DashboardController extends Controller
 	        // ----------------------------------------------------------
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM'|| $getuser->user_type == 'OPT') { 
+
+   		 	if ($request->fromdatem && $request->todatem) 
+			{
+				$fromdate = $request->fromdatem;
+				$todate = $request->todatem;
+			}
+			else{
+				$fromdate = date("Y-m-01");
+			}
+		
    		 	// dd($fromdate,$todate);
    		 	// Show data according to financial year.....
    		 	$volumeCon = DB::table('quotes')
@@ -444,19 +448,11 @@ class DashboardController extends Controller
 	        // Show data according to month .....
 	         
 
-	        $fromdatem = date("Y").'-'.date('m').'-'.'01';
-			$todatem = date("Y-m-d");
-	         
-	         
-
-	         
- 			
-
 	        $getrfqno = DB::table('quotes')
 	        	->select('quotes.id')
 	            ->where('quotes.kam_status',4) 
-	            ->whereDate('quotes.created_at','>=', $fromdatem)
-                ->whereDate('quotes.created_at','<=', $todatem) 
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+                ->whereDate('quotes.created_at','<=', $todate) 
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('rfq_no')
 	            ->get(); 
@@ -480,8 +476,8 @@ class DashboardController extends Controller
 	        $getdepotrfqno = DB::table('quotes')
 	        	->select('quotes.id')
 	            ->where('quotes.kam_status',4)
-	            ->whereDate('quotes.created_at','>=', $fromdatem)
-                ->whereDate('quotes.created_at','<=', $todatem)
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+                ->whereDate('quotes.created_at','<=', $todate)
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('rfq_no')
 	            ->get(); 
@@ -505,8 +501,8 @@ class DashboardController extends Controller
 	        $getdaprfq = DB::table('quotes')
 	        	->select('quotes.id')
 	            ->where('quotes.kam_status',4)  
-	            ->whereDate('quotes.created_at','>=', $fromdatem)
-                ->whereDate('quotes.created_at','<=', $todatem)
+	            ->whereDate('quotes.created_at','>=', $fromdate)
+                ->whereDate('quotes.created_at','<=', $todate)
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('rfq_no')
 	            ->get(); 
