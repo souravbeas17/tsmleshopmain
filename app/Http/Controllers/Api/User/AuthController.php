@@ -805,7 +805,7 @@ class AuthController extends Controller
          if ($user->forgot_pass_count == 3 && $hour<24 ) {
          // $userdata['login_attempt'] = $chkuserd->login_attempt;
           // dd('ji');
-          $response['error']['message'] = "Your account is block please contact admin.";
+          $response['error']['message'] = "Your account is blocked for next 24 hrs, please try after that.";
             return Response::json($response);
          
          }
