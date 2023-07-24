@@ -31,7 +31,10 @@ class DashboardController extends Controller
     */
    public function userDashboard(Request $request)
    {
-   	  
+   		  	
+   	 //  	echo 'First Date    = ' . date('Y-m-01') . '<br />';
+    	// echo 'Last Date     = ' . date('Y-m-t')  . '<br />';
+    	// exit();
    		$userid = $request->user_id;
 
    		$getuser = User::where('id',$userid)->first();
@@ -39,6 +42,7 @@ class DashboardController extends Controller
    		// dd($getuser);
    		// C -- Customer
    		// Kam -- cam
+
    		if ( date('m') <= 03 ) {
    		 		$preyear = date("Y",strtotime("-1 year"));
    		 		$fromdate = $preyear.'-'.'04'.'-'.'01';
@@ -147,8 +151,19 @@ class DashboardController extends Controller
 
 			$data['ex_work_confirmed_orders'] = $exworkcons;
 
-		    $fromdatem = date("Y").'-'.date('m').'-'.'01';
-			$todatem = date("Y-m-d");
+			if ($request->fromdatem && $request->todatem) 
+			{
+				// dd('request');
+				$fromdatem = $request->fromdatem;
+				$todatem = $request->todatem;
+			}
+			else{
+
+				// $fromdatem = date("Y").'-'.date('m').'-'.'01';
+				$fromdatem = date("Y-m-01");
+				$todatem = date("Y-m-d");
+			}
+		    
 	         
 	         
 
