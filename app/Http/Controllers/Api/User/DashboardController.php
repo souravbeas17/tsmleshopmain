@@ -42,8 +42,16 @@ class DashboardController extends Controller
 
    		$todate = date("Y-m-d");
 
-   		if( $request->graph == true )
-   		{
+   		if( $request->graph == 'yearly' ){
+   			if ( date('m') <= 03 ) {
+		 		$preyear = date("Y",strtotime("-1 year"));
+		 		$fromdate = date($preyear."-04-01");
+			}
+			else{
+			    $fromdate = date("Y-04-01"); 
+			}
+
+   		}elseif( $request->graph == 'monthly' ){
    			if ($request->fromdatem && $request->todatem) 
 			{
 				$fromdate = $request->fromdatem;
@@ -59,9 +67,12 @@ class DashboardController extends Controller
 			else{
 			    $fromdate = date("Y-04-01"); 
 			}
+
    		}
 
-   		 // dd($fromdate,$todate);
+
+   		//dd($fromdate,$todate);
+
    		 if ($getuser->user_type == 'C') {
    		 	$quote = DB::table('orders')
             ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')            
