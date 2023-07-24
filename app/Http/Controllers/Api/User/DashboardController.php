@@ -42,15 +42,27 @@ class DashboardController extends Controller
    		// dd($getuser);
    		// C -- Customer
    		// Kam -- cam
+
    		$todate = date("Y-m-d");
 
-   		if ( date('m') <= 03 ) {
-	 		$preyear = date("Y",strtotime("-1 year"));
-	 		$fromdate = date($preyear."-04-01");
-		}
-		else {
-		    $fromdate = date("Y-04-01"); 
-		}
+   		if( $request->graph == true )
+   		{
+   			if ($request->fromdatem && $request->todatem) 
+			{
+				$fromdate = $request->fromdatem;
+				$todate = $request->todatem;
+			}else{
+				$fromdate = date("Y-m-01");
+			}
+   		}else{
+   			if ( date('m') <= 03 ) {
+		 		$preyear = date("Y",strtotime("-1 year"));
+		 		$fromdate = date($preyear."-04-01");
+			}
+			else{
+			    $fromdate = date("Y-04-01"); 
+			}
+   		}
 
    		 // dd($fromdate,$todate);
    		 if ($getuser->user_type == 'C') {
@@ -338,15 +350,7 @@ class DashboardController extends Controller
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM'|| $getuser->user_type == 'OPT') { 
 
-   		 	if ($request->fromdatem && $request->todatem) 
-			{
-				$fromdate = $request->fromdatem;
-				$todate = $request->todatem;
-			}
-			else{
-				$fromdate = date("Y-m-01");
-			}
-		
+
    		 	// dd($fromdate,$todate);
    		 	// Show data according to financial year.....
    		 	$volumeCon = DB::table('quotes')
