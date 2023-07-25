@@ -372,7 +372,17 @@ class DashboardController extends Controller
 	        // monthly volume graph with average net price start
 	        
 	        $curr_date_month = date('m');
-			$calculate_fiscal_year_for_date = $this->calculateFiscalYearForDate($curr_date_month);
+
+	        if($curr_date_month > 4)
+			{
+				$y = date('Y');
+				$pt = date('Y', strtotime('+1 year'));
+				$calculate_fiscal_year_for_date = $y."-04-01".":".$pt."-03-31";
+			}else{
+				$y = date('Y', strtotime('-1 year'));
+				$pt = date('Y');
+				$calculate_fiscal_year_for_date = $y."-04-01".":".$pt."-03-31";
+			}
 			$financ_month = explode(':', $calculate_fiscal_year_for_date);
 
         	$start    = (new DateTime($fromdate))->modify('first day of this month');
@@ -631,21 +641,6 @@ class DashboardController extends Controller
         return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
    }
 
-   public function calculateFiscalYearForDate($month)
-	{
-	if($month > 4)
-	{
-	$y = date('Y');
-	$pt = date('Y', strtotime('+1 year'));
-	$fy = $y."-04-01".":".$pt."-03-31";
-	}
-	else
-	{
-	$y = date('Y', strtotime('-1 year'));
-	$pt = date('Y');
-	$fy = $y."-04-01".":".$pt."-03-31";
-	}
-	return $fy;
-	}
+   
 
 }
