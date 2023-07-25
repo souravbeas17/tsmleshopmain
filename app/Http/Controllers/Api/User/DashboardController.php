@@ -422,10 +422,10 @@ class DashboardController extends Controller
 		        }
 		        
 		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $quote_quantity;
-		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = $average_kam_price;
+		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($average_kam_price,2);
 				$dateObj   = DateTime::createFromFormat('!m', $month);
-				$monthName = $dateObj->format('F');
-		        $MonthlyAveragePriceMonthData[$k]['month'] = $month." ".$monthName;
+				$monthName = $dateObj->format('M');
+		        $MonthlyAveragePriceMonthData[$k]['month'] = $monthName;
 		    }
 		    $data['monthly_average_price_data'] = $MonthlyAveragePriceMonthData;
 
