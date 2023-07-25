@@ -371,27 +371,19 @@ class DashboardController extends Controller
 
 	        // monthly volume graph with average net price start
 	        
-	        $curr_date_month = date('m');
-
-	        if($curr_date_month > 4)
+	        if(date('m') > 4)
 			{
-				$y = date('Y');
-				$pt = date('Y', strtotime('+1 year'));
-				$calculate_fiscal_year_for_date = $y."-04-01".":".$pt."-03-31";
+				$calculate_fiscal_year_for_date = date('Y')."-04-01".":".date('Y', strtotime('+1 year'))."-03-31";
 			}else{
-				$y = date('Y', strtotime('-1 year'));
-				$pt = date('Y');
-				$calculate_fiscal_year_for_date = $y."-04-01".":".$pt."-03-31";
+				$calculate_fiscal_year_for_date = date('Y', strtotime('-1 year'))."-04-01".":".date('Y')."-03-31";
 			}
 			$financ_month = explode(':', $calculate_fiscal_year_for_date);
-
         	$start    = (new DateTime($fromdate))->modify('first day of this month');
         	if($request->todatem){
-        		$end      = (new DateTime($todate))->modify('first day of next month');
+        		$end      = (new DateTime($todate))->modify('last day of this month');
         	}else{
-        		$end      = (new DateTime($financ_month[1]))->modify('first day of next month');
+        		$end      = (new DateTime($financ_month[1]))->modify('last day of this month');
         	}
-			
 			$interval = DateInterval::createFromDateString('1 month');
 			$months   = new DatePeriod($start, $interval, $end);
         	$MonthlyAveragePriceMonthData = [];
