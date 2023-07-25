@@ -370,20 +370,21 @@ class DashboardController extends Controller
 	        $data['top_five_cust_sale'] = $largest; 
 
 	        // monthly volume graph with average net price start
-	        	
+	        
+	        $curr_date_month = date('m');
+			$calculate_fiscal_year_for_date = $this->calculateFiscalYearForDate($curr_date_month);
+			$financ_month = explode(':', $calculate_fiscal_year_for_date);
+
         	$start    = (new DateTime($fromdate))->modify('first day of this month');
-			$end      = (new DateTime($todate))->modify('first day of next month');
+        	if($request->todatem){
+        		$end      = (new DateTime($todate))->modify('first day of next month');
+        	}else{
+        		$end      = (new DateTime($financ_month[1]))->modify('first day of next month');
+        	}
+			
 			$interval = DateInterval::createFromDateString('1 month');
 			$months   = new DatePeriod($start, $interval, $end);
-
-			// foreach ($months as $k=> $month) {
-			//     echo $month->format("m") . "<br>\n";
-			// }
-			$fromYear = date("Y",strtotime($fromdate));
-			$toYear = date("Y",strtotime($todate));
-
         	$MonthlyAveragePriceMonthData = [];
-
         	foreach ($months as $k => $monthh) {
         		$month = $monthh->format("m");
         		$yearName = $monthh->format("Y");
@@ -391,8 +392,8 @@ class DashboardController extends Controller
 	            //->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
 	            ->leftjoin('users','quotes.user_id','users.id')
 	            ->select('quotes.id')
-	            ->whereDate('quotes.created_at','>=', date($fromYear."-".$month."-01"))
-            	->whereDate('quotes.created_at','<=', date($toYear."-".$month."-t"))
+	            ->whereDate('quotes.created_at','>=', date($yearName."-".$month."-01"))
+            	->whereDate('quotes.created_at','<=', date($yearName."-".$month."-t"))
 	            ->where('quotes.kam_status', '!=', 2)
 	            ->where('users.zone',$getuser->zone)
 	            ->whereNull('quotes.deleted_at')
@@ -628,5 +629,23 @@ class DashboardController extends Controller
         // $encrypted = CryptoJsAes::encrypt($data, $password);
             
         return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
-   }	
+   }
+
+   public function calculateFiscalYearForDate($month)
+	{
+	if($month > 4)
+	{
+	$y = date('Y');
+	$pt = date('Y', strtotime('+1 year'));
+	$fy = $y."-04-01".":".$pt."-03-31";
+	}
+	else
+	{
+	$y = date('Y', strtotime('-1 year'));
+	$pt = date('Y');
+	$fy = $y."-04-01".":".$pt."-03-31";
+	}
+	return $fy;
+	}
+
 }
