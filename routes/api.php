@@ -65,6 +65,7 @@ use App\Http\Controllers\Api\Modules\Admin\AdminNotificationController;
 
 use App\Http\Controllers\Api\Modules\PoOptController;
 use App\Http\Controllers\Api\Modules\Quote\PoeditController;
+use App\Http\Controllers\Api\User\DashboardRedirectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -220,7 +221,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
       Route::post('customers/{id}', [UserController::class,'update']);
       Route::post('reset-password', [UserController::class,'resetPassword'])->name('reset_password');
 
-
+      
     // Route::group(['namespace'=>'Api\Modules'],function(){
       // Route::get('download-po-pdf/{id}','Quote\QuoteController@downloadPdf')->name('downloadPdf');
        Route::post('store_quotes',[QuoteController::class,'storeQuotes']);
@@ -474,6 +475,12 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
           Route::post('onbehalf_category_add',[PoOptController::class,'onbehalfCategoryAdd']);
           Route::get('get_cam_customer',[PoOptController::class,'getCamCustomer']);
           Route::get('get_rejected_order',[PoOptController::class,'getRejectedOrder']);
+
+    // -------------------------- dashboard redirect ------------------------
+
+        Route::get('dashboard_cam_cus_list/{id}',[DashboardRedirectController::class,'dashCamCusList']);
+
+    // ----------------------------------------------------------------------
 
 });
 
