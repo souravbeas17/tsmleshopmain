@@ -386,6 +386,7 @@ class DashboardController extends Controller
 
         	foreach ($months as $k => $monthh) {
         		$month = $monthh->format("m");
+        		$yearName = $monthh->format("Y");
         		$getUserMonthlyAveragePrice = DB::table('quotes') 
 	            //->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
 	            ->leftjoin('users','quotes.user_id','users.id')
@@ -422,10 +423,11 @@ class DashboardController extends Controller
 		        }
 		        
 		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $quote_quantity;
-		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($average_kam_price,2);
+		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($average_kam_price);
+		        
 				$dateObj   = DateTime::createFromFormat('!m', $month);
 				$monthName = $dateObj->format('F');
-		        $MonthlyAveragePriceMonthData[$k]['month'] = $monthName;
+		        $MonthlyAveragePriceMonthData[$k]['month'] = $month." ".$monthName." ".$yearName;
 		    }
 		    $data['monthly_average_price_data'] = $MonthlyAveragePriceMonthData;
 
