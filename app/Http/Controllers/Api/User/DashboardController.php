@@ -253,6 +253,14 @@ class DashboardController extends Controller
 	            ->count();
 	             
 	        $data['total_no_cust_assinged'] = $userzone;
+	        
+	        $pendingcast = DB::table('users')  
+	            ->where('users.zone',$getuser->zone)
+	            ->where('users.user_type','C')
+	            ->where('users.user_code','=',null) 
+	            ->count();
+	             
+	        $data['total_no_cust_pending_for_approve'] = $pendingcast;
 	        // dd($getuser->zone);
 	        $orderCon = DB::table('orders')
 	            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')             

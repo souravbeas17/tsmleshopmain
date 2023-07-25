@@ -806,7 +806,7 @@ class AuthController extends Controller
          // $userdata['login_attempt'] = $chkuserd->login_attempt;
           // dd('ji');
           $response['error']['message'] = "Your account is blocked for next 24 hrs, please try after that.";
-            return Response::json($response);
+          return Response::json($response);
          
          }
         else{
