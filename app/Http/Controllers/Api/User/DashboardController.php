@@ -21,6 +21,9 @@ use Response;
 use Mail;
 use DB;
 use Nullix\CryptoJsAes\CryptoJsAes;
+use DateTime;
+use DateInterval;
+use DatePeriod;
 
 class DashboardController extends Controller
 {
@@ -366,64 +369,73 @@ class DashboardController extends Controller
 	            
 	        $data['top_five_cust_sale'] = $largest; 
 
-	         // monthly volume graph with average net price start
-	        	$selectYear = $request->year;
-	        	if($selectYear){
-	        		$year = $selectYear;
-	        	}else{
-	        		$year = date("Y");
-	        	}
-	        	//dd($year);
-	        	$months = ['01','02','03','04','05','06','07','08','09','10','11','12'];
-	        	$MonthlyAveragePriceMonthData = [];
-	        	foreach ($months as $k => $month) {
-	        	
-	        		$getUserMonthlyAveragePrice = DB::table('quotes') 
-		            //->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-		            ->leftjoin('users','quotes.user_id','users.id')
-		            ->select('quotes.id')
-		            ->whereDate('quotes.created_at','>=', date($year."-".$month."-01"))
-	            	->whereDate('quotes.created_at','<=', date($year."-".$month."-t"))
-		            ->where('quotes.kam_status', '!=', 2)
-		            ->where('users.zone',$getuser->zone)
-		            ->whereNull('quotes.deleted_at')
-		            ->get();
+	        // monthly volume graph with average net price start
+	        
+	        if(date('m') > 4)
+			{
+				$calculate_fiscal_year_for_date = date('Y')."-04-01".":".date('Y', strtotime('+1 year'))."-03-31";
+			}else{
+				$calculate_fiscal_year_for_date = date('Y', strtotime('-1 year'))."-04-01".":".date('Y')."-03-31";
+			}
+			$financ_month = explode(':', $calculate_fiscal_year_for_date);
+        	$start    = (new DateTime($fromdate))->modify('first day of this month');
+        	if($request->todatem){
+        		$end      = (new DateTime($todate))->modify('last day of this month');
+        	}else{
+        		$end      = (new DateTime($financ_month[1]))->modify('last day of this month');
+        	}
+			$interval = DateInterval::createFromDateString('1 month');
+			$months   = new DatePeriod($start, $interval, $end);
+        	$MonthlyAveragePriceMonthData = [];
+        	foreach ($months as $k => $monthh) {
+        		$month = $monthh->format("m");
+        		$yearName = $monthh->format("Y");
+        		$getUserMonthlyAveragePrice = DB::table('quotes') 
+	            //->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+	            ->leftjoin('users','quotes.user_id','users.id')
+	            ->select('quotes.id')
+	            ->whereDate('quotes.created_at','>=', date($yearName."-".$month."-01"))
+            	->whereDate('quotes.created_at','<=', date($yearName."-".$month."-t"))
+	            ->where('quotes.kam_status', '!=', 2)
+	            ->where('users.zone',$getuser->zone)
+	            ->whereNull('quotes.deleted_at')
+	            ->get();
 
-		            //dd($getUserMonthlyAveragePrice);	
-		            $quote_quantity = $quote_kamprice = $average_kam_price = 0;
-		            //$MonthlyAveragePriceMonthData = [];
-			        foreach ($getUserMonthlyAveragePrice as $key => $value) {
-			            	
-			        	$getUserMonthlyAveragePriceQuteSheduleQuantity = DB::table('quote_schedules')
-		   		 	 	->select('quote_schedules.quantity') 
-			            ->where('quote_schedules.quote_id',$value->id)
-			            ->sum('quote_schedules.quantity');
-			            $getUserMonthlyAveragePriceQuteSheduleKamprice = DB::table('quote_schedules')
-		   		 	 	->select('quote_schedules.kam_price') 
-			            ->where('quote_schedules.quote_id',$value->id)
-			            ->sum('quote_schedules.kam_price');
+	            //dd($getUserMonthlyAveragePrice);	
+	            $quote_quantity = $quote_kamprice = $average_kam_price = 0;
+	            //$MonthlyAveragePriceMonthData = [];
+		        foreach ($getUserMonthlyAveragePrice as $key => $value) {
+		            	
+		        	$getUserMonthlyAveragePriceQuteSheduleQuantity = DB::table('quote_schedules')
+	   		 	 	->select('quote_schedules.quantity') 
+		            ->where('quote_schedules.quote_id',$value->id)
+		            ->sum('quote_schedules.quantity');
+		            $getUserMonthlyAveragePriceQuteSheduleKamprice = DB::table('quote_schedules')
+	   		 	 	->select('quote_schedules.kam_price') 
+		            ->where('quote_schedules.quote_id',$value->id)
+		            ->sum('quote_schedules.kam_price');
 
-			            $quote_quantity = $quote_quantity + $getUserMonthlyAveragePriceQuteSheduleQuantity;
-			            $quote_kamprice = $quote_kamprice + $getUserMonthlyAveragePriceQuteSheduleKamprice;
+		            $quote_quantity = $quote_quantity + $getUserMonthlyAveragePriceQuteSheduleQuantity;
+		            $quote_kamprice = $quote_kamprice + $getUserMonthlyAveragePriceQuteSheduleKamprice;
+		            
+		        }
+		        if($quote_quantity == 0){
+		        	$average_kam_price = 0;
+		        }else{
+		        	$average_kam_price = $quote_kamprice / $quote_quantity;
+		        }
+		        
+		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $quote_quantity;
+		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($average_kam_price);
+		        
+				$dateObj   = DateTime::createFromFormat('!m', $month);
+				$monthName = $dateObj->format('F');
+		        $MonthlyAveragePriceMonthData[$k]['month'] = $month." ".$monthName." ".$yearName;
+		    }
+		    $data['monthly_average_price_data'] = $MonthlyAveragePriceMonthData;
 
-			            
-			        }
-			        if($quote_quantity == 0){
-			        	$average_kam_price = 0;
-			        }else{
-			        	$average_kam_price = $quote_kamprice / $quote_quantity;
-			        }
-			        
-			        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $quote_quantity;
-			        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = $average_kam_price;
-			        $MonthlyAveragePriceMonthData[$k]['month'] = $month;
-
-			        //dd($MonthlyAveragePriceMonthData);
-
-			    }
-			    $data['monthly_average_price_data'] = $MonthlyAveragePriceMonthData;
 	        // monthly volume graph with average net price end
-			    
+
 	        // ----------------------------------------------------------
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM'|| $getuser->user_type == 'OPT') { 
@@ -619,5 +631,8 @@ class DashboardController extends Controller
         // $encrypted = CryptoJsAes::encrypt($data, $password);
             
         return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
-   }	
+   }
+
+   
+
 }
