@@ -322,12 +322,7 @@ class AdminUserManageController extends Controller
       $response = [];
         try{         
            
-              // $data = DB::table('users')
-              //             ->leftjoin('address','users.id','address.user_id')                           
-              //             ->select('users.id as user_id','users.id as user_id''address.*')
-              //             ->get();
-            // $data = User::orderBy('id','desc')->where('user_type','=','C')->get();
-            // dd($request->userId);
+             
             $addressdata = DB::table('users')
                     ->leftjoin('address','users.id','address.user_id')
                     ->where('users.id',$request->userId) 
