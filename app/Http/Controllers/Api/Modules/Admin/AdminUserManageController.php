@@ -331,7 +331,7 @@ class AdminUserManageController extends Controller
             $addressdata = DB::table('users')
                     ->leftjoin('address','users.id','address.user_id')
                     ->where('users.id',$request->userId) 
-                    ->select('users.id as uid','users.zone as user_zone','users.user_code as user_code','address.*')
+                    ->select('users.id as uid','users.org_name as com_name','users.zone as user_zone','users.user_code as user_code','address.*')
                     ->get();  
             // dd($addressdata);
             return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata],200);
