@@ -322,20 +322,23 @@ class AdminUserManageController extends Controller
       $response = [];
         try{         
            
-              // $data = DB::table('users')
-              //             ->leftjoin('address','users.id','address.user_id')                           
-              //             ->select('users.id as user_id','users.id as user_id''address.*')
-              //             ->get();
-            // $data = User::orderBy('id','desc')->where('user_type','=','C')->get();
-            // dd($request->userId);
+             
             $addressdata = DB::table('users')
                     ->leftjoin('address','users.id','address.user_id')
                     ->where('users.id',$request->userId) 
-                    ->select('users.id as uid','users.zone as user_zone','users.user_code as user_code','address.*')
+                    ->select('users.id as uid','users.org_name as com_name','users.zone as user_zone','users.user_code as user_code','address.*')
                     ->get();  
             // dd($addressdata);
             return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata],200);
           
+          // $getuser = DB::table('users')->where('users.id',$request->userId)->first();
+          //   // dd($getuser->zone);
+          // $kam_data = DB::table('users')
+          //                     ->where(['user_type' => "Kam",'zone' => $getuser->zone])
+          //                     ->select('users.id as kam_id','users.name as kam_name','users.email as kam_email')
+          //                     ->first();
+
+          // return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata,'kamdata'=>$kam_data],200);
         
         }catch(\Exception $e){
             $response['error'] = $e->getMessage();
