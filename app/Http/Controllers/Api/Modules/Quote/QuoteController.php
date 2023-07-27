@@ -2896,7 +2896,7 @@ class QuoteController extends Controller
             // echo $request->input('po_no'.$value)."<br>";
             // echo $request->input('po_date'.$value)."<br>";
             // echo $request->input('type'.$value)."<br>";
-            // echo $request->input('sche'.$value)."<br>";
+            
 
 
             if($request->hasFile('letterHead'.$value))
@@ -2925,6 +2925,8 @@ class QuoteController extends Controller
             // echo "<pre>";print_r($poArr);exit();
 
             Order::create($poArr);
+
+            $poArr['letterhead'] = "";
 
             
           }
