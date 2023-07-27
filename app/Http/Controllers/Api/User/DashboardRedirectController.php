@@ -155,7 +155,7 @@ class DashboardRedirectController extends Controller
                 ->whereDate('quotes.created_at','<=', $todate) 
 	            ->whereNull('quotes.deleted_at') 
 	            ->get()->toarray();	         
-	        $data['volumeconfirmed'] = $volumeCon;
+	        $data['plantvolumeconfirmed'] = $volumeCon;
 
 	        $volumeUnderNego = DB::table('quotes')
 	        ->leftjoin('users','quotes.user_id','users.id')
@@ -166,7 +166,7 @@ class DashboardRedirectController extends Controller
 	            ->whereNull('quotes.deleted_at')
 	            // ->groupBy('rfq_no')
 	            ->get()->toarray();	         
-	        $data['volume_under_negotiation'] = $volumeUnderNego;
+	        $data['rfq_under_negotiation'] = $volumeUnderNego;
  			
 
     
