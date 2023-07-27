@@ -336,6 +336,14 @@ class AdminUserManageController extends Controller
             // dd($addressdata);
             return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata],200);
           
+          // $getuser = DB::table('users')->where('users.id',$request->userId)->first();
+          //   // dd($getuser->zone);
+          // $kam_data = DB::table('users')
+          //                     ->where(['user_type' => "Kam",'zone' => $getuser->zone])
+          //                     ->select('users.id as kam_id','users.name as kam_name','users.email as kam_email')
+          //                     ->first();
+
+          // return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata,'kamdata'=>$kam_data],200);
         
         }catch(\Exception $e){
             $response['error'] = $e->getMessage();
