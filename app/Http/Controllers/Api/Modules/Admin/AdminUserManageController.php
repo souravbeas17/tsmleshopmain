@@ -330,6 +330,7 @@ class AdminUserManageController extends Controller
                     ->get();  
             // dd($addressdata);
             return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata],200);
+            
           
           // $getuser = DB::table('users')->where('users.id',$request->userId)->first();
           //   // dd($getuser->zone);
