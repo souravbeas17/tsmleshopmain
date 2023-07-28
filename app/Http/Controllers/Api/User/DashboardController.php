@@ -371,7 +371,7 @@ class DashboardController extends Controller
 
 	        // monthly volume graph with average net price start
 	        
-	        if(date('m') > 4)
+	        if(date('m') >= 4)
 			{
 				$calculate_fiscal_year_for_date = date('Y')."-04-01".":".date('Y', strtotime('+1 year'))."-03-31";
 			}else{
