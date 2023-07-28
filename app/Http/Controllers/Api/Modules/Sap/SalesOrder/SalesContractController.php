@@ -457,14 +457,13 @@ class SalesContractController extends Controller
                
             $quote = DB::table('orders')
            ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-           ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-           ->leftjoin('users','quotes.user_id','users.id')
-           ->leftjoin('sales_contracts','orders.po_no','sales_contracts.po_no')    
-           ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status',DB::raw("(sum(quote_schedules.quantity)) as tot_qt"),'orders.amdnt_no','orders.cus_po_no','quotes.created_at','sales_contracts.sc_no','sales_contracts.created_at as sc_dt','orders.status')
-           ->orderBy('quotes.updated_at','desc')
-           ->groupBy('quotes.rfq_no');
+           
+           ->leftjoin('users','quotes.user_id','users.id')  
+           ->select('orders.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status','orders.amdnt_no','orders.cus_po_no','quotes.created_at','orders.status','orders.sche')
+           ->orderBy('quotes.updated_at','desc');
+           // ->groupBy('quotes.rfq_no');
 
-           $quote = $quote->whereNull('quotes.deleted_at')->where('quote_schedules.quote_status',1)->whereNotNull('orders.cus_po_no')
+           $quote = $quote->whereNull('quotes.deleted_at')->whereNotNull('orders.cus_po_no')
            ->get()->toArray();
            // echo "<pre>";print_r($quote);exit();
 
@@ -472,19 +471,37 @@ class SalesContractController extends Controller
           {
           foreach ($quote as $key => $value) {
             
-            
+            if(!empty($value->sche))
+            {  
+                $scheall = $value->sche;
+                $trim = trim($scheall,",");
+                $variable = explode(",",$trim);
+                $qty = DB::table('quote_schedules')->whereIn('schedule_no',$variable)->select('quantity')->get()->toArray();
+                $schqty = array_column($qty, 'quantity');
+                $sum = array_sum($schqty);
+                // dd($sum);
+            }
+            else{
+
+                $qty = DB::table('quotes')->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')->select('quote_schedules.quantity')->whereNull('quotes.deleted_at')->where('quote_schedules.quote_status',1)->get()->toArray();
+                $schqty = array_column($qty, 'quantity');
+                $sum = array_sum($schqty);
+            }
+
+            $sc = DB::table('sales_contracts')->where('po_no',$value->po_no)->select('sales_contracts.sc_no','sales_contracts.created_at as sc_dt')->first();
+
             $result[$key]['po_no'] = $value->po_no;
             $result[$key]['cus_po_no'] = $value->cus_po_no;
             $result[$key]['user'] = $value->name;
             $result[$key]['rfq_no'] = $value->rfq_no;
-            $result[$key]['quantity'] = $value->tot_qt;
+            $result[$key]['quantity'] = $sum;
             $result[$key]['amdnt_no'] = $value->amdnt_no;
             $date =  date_create($value->po_date);
             $po_dt = date_format($date,"d/m/Y");
             $result[$key]['po_date'] = $po_dt;
             $result[$key]['rfq_date'] = date('m-d-y',strtotime($value->created_at));
-            $result[$key]['sc_no'] = $value->sc_no;
-            $result[$key]['sc_date'] = date('m-d-y',strtotime($value->sc_dt));
+            $result[$key]['sc_no'] = (!empty($sc)) ? $sc->sc_no : '';
+            $result[$key]['sc_date'] = (!empty($sc)) ? date('m-d-y',strtotime($sc->sc_dt)) : '';
             $result[$key]['status'] = $value->status;
 
            
