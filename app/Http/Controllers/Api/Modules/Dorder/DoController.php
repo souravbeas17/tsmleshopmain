@@ -647,33 +647,44 @@ class DoController extends Controller
 
           try{ 
 
+            $arra = array();
+
             $zone =  Auth::user()->zone;
                
-            $res = DB::table('delivery_orders')
-              ->leftjoin('sales_orders','delivery_orders.so_no','sales_orders.so_no')
-               ->leftjoin('sales_contracts','sales_orders.transact_id','sales_contracts.id')
-               ->leftjoin('orders','sales_contracts.po_no','orders.po_no')
-               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-               ->leftjoin('users','quotes.user_id','users.id')
-               // ->where('orders.po_no',$po_no)->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
-              ->where('users.zone',$zone)->whereNull('quotes.deleted_at')
-               ->select('sales_orders.so_no','sales_orders.created_at','delivery_orders.do_no','delivery_orders.do_quantity','delivery_orders.created_at as do_date','users.name','sales_contracts.qty_cont','delivery_orders.id as do_id')
-               ->get();
+            $res = DB::table('delivery_orders')->get();
+
+             $c = 0;
 
                foreach ($res as $key => $value) {
+
+                  $sc_excel = DB::table('sc_excel_datas')->where('ordr_no',$value->so_no)->select('Cust_Referance','CustomarMaterialNumber','date','OrderQuantity')->first();
+
+                  $po_no = "";
+               if(!empty($sc_excel))
+               {
+               $po_no = DB::table('orders')
+               ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+               ->leftjoin('users','quotes.user_id','users.id')->where('orders.cus_po_no',$sc_excel->Cust_Referance)->select('users.zone as uzone','users.org_name as name')->first();
+                }
                   
-                  $arra[$key]['do_id'] = $value->do_id;
-                  $arra[$key]['so_no'] = $value->so_no;
-                  $arra[$key]['do_no'] = $value->do_no;
-                  $arra[$key]['do_quantity'] = $value->do_quantity;
-                  $arra[$key]['so_date'] = date('d-m-Y',strtotime($value->created_at));
-                  $arra[$key]['do_date'] = date('d-m-Y',strtotime($value->do_date));
-                  $arra[$key]['qty_cont'] = $value->qty_cont;
-                  $arra[$key]['cus_name'] = $value->name;
+                  if(!empty($po_no) && $po_no->uzone == $zone)
+                  {
+
+                  $arra[$c]['do_id'] = $value->id;
+                  $arra[$c]['so_no'] = $value->so_no;
+                  $arra[$c]['do_no'] = $value->do_no;
+                  $arra[$c]['do_quantity'] = $value->do_quantity;
+                  $arra[$c]['so_date'] = (!empty($sc_excel)) ? date('d-m-Y',strtotime($sc_excel->date)) : '';
+                  $arra[$c]['do_date'] = date('d-m-Y',strtotime($value->created_at));
+                  $arra[$c]['qty_cont'] = (!empty($sc_excel)) ? $sc_excel->OrderQuantity : '';
+                  $arra[$c]['cus_name'] = (!empty($po_no)) ? $po_no->name : '';
+
+                   $c++;
+                }
                   
                }
                
-                   // echo "<pre>";print_r($newcount);exit();
+                   // echo "<pre>";print_r($arra);exit();
              
               return response()->json(['status'=>1,
                 'message' =>'success',
