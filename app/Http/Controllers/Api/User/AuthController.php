@@ -144,11 +144,95 @@ class AuthController extends Controller
                     return response()->json([
                     'success' => false,'message' => 'Please reset your password on first login.','result' =>$chkuserd->login_attempt]);
                    }
+
+                   if(!empty($chkuserd->forgot_pass_date)){
+                      $datestime = date("Y-m-d H:i:s");
+                      $forgot_pass_date = $chkuserd->forgot_pass_date;
+
+                      $timestamp1 = strtotime($datestime);
+                      $timestamp2 = strtotime($forgot_pass_date);
+                      $hour = abs($timestamp2 - $timestamp1)/(60*60);
+
+                      
+                      
+                      $datetime1 = new DateTime($chkuserd->forgot_pass_date);
+                      $datetime2 = new DateTime();
+                      $interval = $datetime1->diff($datetime2);
+                      $elapsed = $interval->format('%i minutes %s seconds');
+
+                      // dd($elapsed);
+
+                      if ($hour>24) 
+                      {
+                         // dd($hour);
+                        User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+                      }
+                    }
+
+                    if(!empty($chkuserd->forgot_pass_date) && !empty($chkuserd->forgot_pass_date_2)){
+
+                      $datestime = date("Y-m-d H:i:s");
+                      $forgot_pass_date = $chkuserd->forgot_pass_date_2;
+
+                      $timestamp1 = strtotime($datestime);
+                      $timestamp2 = strtotime($forgot_pass_date);
+                      $hour2 = abs($timestamp2 - $timestamp1)/(60*60);
+                      // dd($timestamp2);
+                      if ($hour2>24) 
+                      {
+                         // dd($hour);
+                        User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_date_2'=>null,'forgot_pass_count'=>0]);
+                      }
+                    }
+
+                   if ($chkuserd->forgot_pass_count == 5 && $hour<0.5 ) {
+                   // $userdata['login_attempt'] = $chkuserd->login_attempt;
+                    // dd('ji');
+                    $datetime1 = new DateTime();
+                    $datetime2 = new DateTime($chkuserd->forgot_pass_date);
+                    $interval = $datetime1->diff($datetime2);
+                    $delay = $interval->format('%i minutes %s seconds');
+
+                     return response()->json([
+                    'success' => false,'message' => 'Your account is blocked for next '.$delay.', please try after that.']);
+
+                    
+                   
+                   }
+                   if ($chkuserd->forgot_pass_count == 15 && $hour2<24 ) {
+                   // $userdata['login_attempt'] = $chkuserd->login_attempt;
+                    // dd('ji');
+                    $datetime1 = new DateTime();
+                    $datetime2 = new DateTime($chkuserd->forgot_pass_date_2);
+                    $interval = $datetime1->diff($datetime2);
+                    $delay = $interval->format('%h hours %i minutes %s seconds');
+                     return response()->json([
+                    'success' => false,'message' => 'Your account is blocked for next '.$delay.', please try after that.']);
+                   
+                   }
                    else{
+
+                    $getuser =  User::where('email',$decrypted['email'])->first();
+                    $forgot_pass_count = $getuser->forgot_pass_count+1;
+
                     $otp = random_int(100000, 999999); 
                     $inputotp['login_otp'] = $otp;
 
                     $datestime = date("Y-m-d H:i:s");
+
+                    User::where('email',$decrypted['email'])->update(['forgot_pass_count'=>$forgot_pass_count,]);
+
+                    if ($forgot_pass_count == 5) 
+                    {
+                      $datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
+                      // dd($datestime);
+                       User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>$datestime]);
+                    }
+                    if ($forgot_pass_count == 15) 
+                    {
+                      $datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
+                       User::where('email',$decrypted['email'])->update(['forgot_pass_date_2'=>$datestime]);
+                    }
                     // $endTime = strtotime("+3 minutes", strtotime($datestime));
                     // $dtime =  date('Y-m-d h:i:s', $endTime);
                     // dd($datestime,$dtime);
@@ -156,8 +240,7 @@ class AuthController extends Controller
                     // User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
                     
                     $inputotp['otp_expires_time'] =$datestime; 
-                    $inputotp['forgot_pass_date'] = null; 
-                    $inputotp['forgot_pass_count'] = 0; 
+                    
                     $categoryData = User::where('email',$decrypted['email'])->update($inputotp); 
                     $sub = "OTP For Login";
                     $html = 'mail.Otpverificationmail';
@@ -167,7 +250,7 @@ class AuthController extends Controller
                     
                     (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
            
-                    $msg = "OTP has been sent to this email address ".$decrypted['email']." successfully.";
+                    $msg = "OTP has been sent to this email address ".$decrypted['email'] ." successfully.";
 
                     $getuser = User::where('email',$decrypted['email'])->first(); 
                     $userdata['email'] = $decrypted['email'];
@@ -176,6 +259,9 @@ class AuthController extends Controller
                     // dd('ji');
                     return response()->json([
                     'success' => true,'status'=>1,'message' => $msg,'result' =>$userdata]);
+
+
+                    
                    }
                   
                   //return response()->json(['status'=>1,'message' =>$msg,'result' =>$userdata]);
@@ -343,6 +429,9 @@ class AuthController extends Controller
                 $userArr['user_type'] = $userdata->user_type;
                 $updata['is_loggedin'] = 1;
                 $updata['login_count'] = 0;
+                $updata['forgot_pass_date'] = null; 
+                $updata['forgot_pass_date_2'] = null;
+                $updata['forgot_pass_count'] = 0;
                 $updata['login_otp'] = NULL;
                 $updata['jwt_token'] = $jwt_token;
                 $upuser = User::where('id',Auth::user()->id)->update($updata);
@@ -782,10 +871,35 @@ class AuthController extends Controller
             $timestamp2 = strtotime($forgot_pass_date);
             $hour = abs($timestamp2 - $timestamp1)/(60*60);
 
+            
+            
+            $datetime1 = new DateTime($user->forgot_pass_date);
+            $datetime2 = new DateTime();
+            $interval = $datetime1->diff($datetime2);
+            $elapsed = $interval->format('%i minutes %s seconds');
+
+            // dd($elapsed);
+
             if ($hour>24) 
             {
                // dd($hour);
               User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+            }
+          }
+
+          if(!empty($user->forgot_pass_date) && !empty($user->forgot_pass_date_2)){
+
+            $datestime = date("Y-m-d H:i:s");
+            $forgot_pass_date = $user->forgot_pass_date_2;
+
+            $timestamp1 = strtotime($datestime);
+            $timestamp2 = strtotime($forgot_pass_date);
+            $hour2 = abs($timestamp2 - $timestamp1)/(60*60);
+            // dd($timestamp2);
+            if ($hour2>24) 
+            {
+               // dd($hour);
+              User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_date_2'=>null,'forgot_pass_count'=>0]);
             }
           }
           
@@ -803,10 +917,26 @@ class AuthController extends Controller
             return Response::json($response);
          
          }
-         if ($user->forgot_pass_count == 3 && $hour<24 ) {
+         if ($user->forgot_pass_count == 5 && $hour<0.5 ) {
          // $userdata['login_attempt'] = $chkuserd->login_attempt;
           // dd('ji');
-          $response['error']['message'] = "Your account is blocked for next 24 hrs, please try after that.";
+          $datetime1 = new DateTime();
+          $datetime2 = new DateTime($user->forgot_pass_date);
+          $interval = $datetime1->diff($datetime2);
+          $delay = $interval->format('%i minutes %s seconds');
+
+          $response['error']['message'] = "Your account is blocked for next ".$delay.", please try after that.";
+          return Response::json($response);
+         
+         }
+         if ($user->forgot_pass_count == 15 && $hour2<24 ) {
+         // $userdata['login_attempt'] = $chkuserd->login_attempt;
+          // dd('ji');
+          $datetime1 = new DateTime();
+          $datetime2 = new DateTime($user->forgot_pass_date_2);
+          $interval = $datetime1->diff($datetime2);
+          $delay = $interval->format('%h hours %i minutes %s seconds');
+          $response['error']['message'] = "Your account is blocked for ".$delay.", please try after that.";
           return Response::json($response);
          
          }
@@ -826,9 +956,16 @@ class AuthController extends Controller
           
             User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_count'=>$forgot_pass_count,]);
 
-            if ($forgot_pass_count == 3) 
+            if ($forgot_pass_count == 5) 
             {
-               User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_date'=>$datestime,]);
+              $datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
+              // dd($datestime);
+               User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>$datestime]);
+            }
+            if ($forgot_pass_count == 15) 
+            {
+              $datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
+               User::where('email',$decrypted['email'])->update(['forgot_pass_date_2'=>$datestime]);
             }
 
             $mailSub = 'Forgot Password';
