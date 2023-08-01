@@ -433,10 +433,18 @@ class SalesContractController extends Controller
       public function qty_ct($po_no)
       {
          $sum = 0;
-
+         
+          $sche = DB::table('orders')->where('po_no',$po_no)->first();
+          
          $res = DB::table('orders')->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-         ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-         ->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
+         ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id');
+
+         if(!empty($sche->sche))
+         {    
+              $scheNo = explode(",",$sche->sche);
+              $res = $res->whereIn('quote_schedules.schedule_no',$scheNo);
+         }
+         $res = $res->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
          ->where('orders.po_no',$po_no)->select('quote_schedules.quantity')->get();
 
          foreach ($res as $key => $value) {
