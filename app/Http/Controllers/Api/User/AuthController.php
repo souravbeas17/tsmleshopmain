@@ -148,12 +148,12 @@ class AuthController extends Controller
                    if(!empty($chkuserd->forgot_pass_date)){
                       $datestime = date("Y-m-d H:i:s");
                       $forgot_pass_date = $chkuserd->forgot_pass_date;
-
+                      $forgot_pass_date = date($forgot_pass_date,strtotime("+30 minutes"));
                       $timestamp1 = strtotime($datestime);
                       $timestamp2 = strtotime($forgot_pass_date);
                       $hour = abs($timestamp2 - $timestamp1)/(60*60);
 
-                      
+                      //dd($hour);
                       
                       $datetime1 = new DateTime($chkuserd->forgot_pass_date);
                       $datetime2 = new DateTime();
@@ -173,7 +173,7 @@ class AuthController extends Controller
 
                       $datestime = date("Y-m-d H:i:s");
                       $forgot_pass_date = $chkuserd->forgot_pass_date_2;
-
+                      $forgot_pass_date = date($forgot_pass_date,strtotime('+1 day'));
                       $timestamp1 = strtotime($datestime);
                       $timestamp2 = strtotime($forgot_pass_date);
                       $hour2 = abs($timestamp2 - $timestamp1)/(60*60);
@@ -190,6 +190,7 @@ class AuthController extends Controller
                     // dd('ji');
                     $datetime1 = new DateTime();
                     $datetime2 = new DateTime($chkuserd->forgot_pass_date);
+                    $datetime2->modify('+30 minutes');
                     $interval = $datetime1->diff($datetime2);
                     $delay = $interval->format('%i minutes %s seconds');
 
@@ -204,6 +205,7 @@ class AuthController extends Controller
                     // dd('ji');
                     $datetime1 = new DateTime();
                     $datetime2 = new DateTime($chkuserd->forgot_pass_date_2);
+                    $datetime2->modify('+1 day');
                     $interval = $datetime1->diff($datetime2);
                     $delay = $interval->format('%h hours %i minutes %s seconds');
                      return response()->json([
@@ -224,13 +226,13 @@ class AuthController extends Controller
 
                     if ($forgot_pass_count == 5) 
                     {
-                      $datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
+                      //$datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
                       // dd($datestime);
                        User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>$datestime]);
                     }
                     if ($forgot_pass_count == 15) 
                     {
-                      $datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
+                      //$datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
                        User::where('email',$decrypted['email'])->update(['forgot_pass_date_2'=>$datestime]);
                     }
                     // $endTime = strtotime("+3 minutes", strtotime($datestime));
