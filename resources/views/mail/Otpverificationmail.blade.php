@@ -33,7 +33,7 @@
         </tr>
         <tr>
             <td style="padding: 0 15px;">
-                <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">Your Verification otp is {{@$data['otp']}}.This OTP expired in 3 minutes. </p>
+                <p style="font-weight: 400; font-size: 15px; line-height: 1.8; color: rgba(0,0,0,.8);">Your Verification otp is {{@$data['otp']}}.This OTP expired in 10 minutes. </p>
 
             </td>
         </tr>
