@@ -224,13 +224,13 @@ class AuthController extends Controller
 
                     if ($forgot_pass_count == 5) 
                     {
-                      $datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
+                      //$datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
                       // dd($datestime);
                        User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>$datestime]);
                     }
                     if ($forgot_pass_count == 15) 
                     {
-                      $datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
+                      //$datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
                        User::where('email',$decrypted['email'])->update(['forgot_pass_date_2'=>$datestime]);
                     }
                     // $endTime = strtotime("+3 minutes", strtotime($datestime));
