@@ -420,7 +420,7 @@ class AuthController extends Controller
               // $diff_minutes = round(abs($from_time - $to_time) / 60,2);
               
               // dd($datetime_1,$datetime_2,$diff_minutes,$diff_in_minutes);
-              if ($diff_in_minutes>3) 
+              if ($diff_in_minutes>10) 
               {
                return response()->json(['success' => false,'message' => 'OTP expired !!']);
               }
@@ -1053,7 +1053,7 @@ class AuthController extends Controller
               $from_time = strtotime($datetime_1);
               $to_time = strtotime($datetime_2);
               $diff_minutes = round(abs($from_time - $to_time) / 60,2);
-              if ($diff_minutes>3) {
+              if ($diff_minutes>10) {
                 $response['error']['message'] = "OTP expired !!";
                     return Response::json($response);  
                  
