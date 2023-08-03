@@ -286,21 +286,20 @@
             $cataId = $request->cat_id;
             $chkcata = Category::where('id',$cataId)->first();
 
-               
+               // dd($request->sub_cat_id);
 
                 $validation = \Validator::make($request->all(),[ 
                     "cat_id" => "required|numeric",
                     "pro_id" => "required|numeric",                  
                     "sub_cat_id" => "required|numeric",
-                    "sub_cat_name" => "required|max:200|unique:sub_categorys,sub_cat_name,".$request->sub_cat_id,
+                    "sub_cat_name" => "required|max:200",
                     "sub_cat_dese" => "required|max:200", 
                     "pro_size" => "required|max:200",
                 ],[ 
                     'cat_id.required'=>'Category id is required.',
                     'pro_id.required'=>'Product id is required.',
                     'sub_cat_id.required'=>'Sub category id is required.',
-                    'sub_cat_name.required'=>'Sub category name is required.',
-                    'sub_cat_name.unique'=>'Sub category already exists.',
+                    'sub_cat_name.required'=>'Sub category name is required.', 
                     'sub_cat_dese.required'=>'Sub category description required.', 
                     'pro_size.required'=>'Product size required.',
                 ]);
