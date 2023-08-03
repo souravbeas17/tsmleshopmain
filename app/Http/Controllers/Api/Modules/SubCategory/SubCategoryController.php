@@ -437,10 +437,11 @@
                   $size = $result[$key]['from'].'-'.$result[$key]['to'];
                   $result[$key]['mat_no'] = $this->getMatNo($catData->id,$catData->plant_code,$size);
                   array_push($mat_no_up,$this->getMatNo($catData->id,$catData->plant_code,$size));
+                  // dd($result[$key]['mat_no']);
                 }
 
 
-
+                // dd($mat_no_up);
                 $catadetails['size'] = $getsize;
                 $catadetails['pro_size'] = $result;
                 $catadetails['mat'] = $mat_no_up; 
@@ -463,9 +464,16 @@
          */
         public function getMatNo($subcatid,$planttype,$size)
         {
+          // dd($subcatid,$planttype,$size);
           $getmetno = DB::table('product_size_mat_no')->where('sub_cat_id',$subcatid)->where('plant_type',$planttype)->where('product_size',$size)->first();
-          
-          return $getmetno->mat_no;
+          // dd($getmetno->mat_no);
+          if (!empty($getmetno)) {
+            return $getmetno->mat_no;
+          }
+          else{
+            return null;
+          }
+           
         }
  
         /**
