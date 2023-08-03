@@ -442,9 +442,9 @@
 
 
                 // dd($mat_no_up);
-                $catadetails['size'] = $getsize;
+                // $catadetails['size'] = $getsize;
                 $catadetails['pro_size'] = $result;
-                $catadetails['mat'] = $mat_no_up; 
+                // $catadetails['mat'] = $mat_no_up; 
                 
                 
 
