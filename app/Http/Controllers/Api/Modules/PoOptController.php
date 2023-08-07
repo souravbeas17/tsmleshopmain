@@ -151,7 +151,7 @@ public function getCamCustomer()
 	            ->leftjoin('quote_schedules','quote_schedules.quote_id','quotes.id')
 	            ->leftjoin('users','quotes.user_id','users.id')
 	            ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
-	            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','sub_categorys.sub_cat_name as pro_name')
+	            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','sub_categorys.sub_cat_name as pro_name','quote_schedules.remarks')
 	            ->where('users.zone',$user_zone)
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('schedule_no')
@@ -161,13 +161,12 @@ public function getCamCustomer()
     			$results  = DB::table('quotes')
 	            ->leftjoin('quote_schedules','quote_schedules.quote_id','quotes.id')
 	            ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
-	            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','sub_categorys.sub_cat_name as pro_name')
+	            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','sub_categorys.sub_cat_name as pro_name','quote_schedules.remarks')
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('schedule_no')
 	            ->orderBy('quotes.created_at','desc')
 	            ->get()->toArray();
     		}
-            
             
 		    return response()->json(['status'=>1,'message' =>'Rejected orders.','result' => $results],200);
 		}catch(\Exception $e){
@@ -183,14 +182,12 @@ public function getCamCustomer()
 			$results  = DB::table('quotes')
             ->leftjoin('quote_schedules','quote_schedules.quote_id','quotes.id')
             ->leftjoin('sub_categorys','quote_schedules.sub_cat_id','sub_categorys.id')
-            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','sub_categorys.sub_cat_name as pro_name')
+            ->select('quotes.rfq_no','quotes.quantity','quote_schedules.pro_size','quote_schedules.to_date','quote_schedules.from_date','sub_categorys.sub_cat_name as pro_name','quote_schedules.remarks')
             ->whereNull('quotes.deleted_at')
             ->groupBy('schedule_no')
             ->orderBy('quotes.created_at','desc')
             ->get()->toArray();
-    		
-            
-            
+
 		    return response()->json(['status'=>1,'message' =>'Rejected orders admin.','result' => $results],200);
 		}catch(\Exception $e){
         	return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
