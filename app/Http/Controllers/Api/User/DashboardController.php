@@ -270,7 +270,7 @@ class DashboardController extends Controller
 	            ->leftjoin('users','quotes.user_id','users.id')
 	            ->whereDate('orders.created_at','>=', $fromdate)
             	->whereDate('orders.created_at','<=', $todate)
-	            ->where('orders.status',1)
+	            ->whereNotNull('orders.amdnt_no')
 	            ->where('users.zone',$getuser->zone)
 	            ->whereNull('quotes.deleted_at')
 	            ->count();
