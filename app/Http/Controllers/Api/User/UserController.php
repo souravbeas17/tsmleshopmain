@@ -1148,4 +1148,28 @@ class UserController extends Controller
          $msg = "Mail sent successfully";
          return response()->json(['status'=>1,'message' =>$msg],200);
     }
+
+
+     // --------------------  tcs update ------------------------------------
+    public function updateTcs(Request $request)
+    {
+        
+
+         try{
+
+             $image = $request->file('tcsUpdated'); 
+             $filename = time() . '-' . rand(1000, 9999) . '.' . $image->getClientOriginalExtension();
+             $image->move("storage/app/public/user",$filename);
+             $userData['tcs'] = $filename;
+
+             User::where('id',$request->id)->update($userData);
+
+             $msg = "Tcs Updated successfully";
+             return response()->json(['status'=>1,'message' =>$msg],200);
+            
+           } catch (\Throwable $th) {
+            $response['error']['message'] = $th->getMessage();
+            return Response::json($response);
+           } 
+    }
 }

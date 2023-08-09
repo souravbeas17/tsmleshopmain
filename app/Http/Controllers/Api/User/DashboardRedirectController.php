@@ -45,6 +45,7 @@ class DashboardRedirectController extends Controller
 	            	  $arr[$key]['user_code'] = $value->user_code;
 	            	  $arr[$key]['org_name'] = $value->org_name;
 	            	  $arr[$key]['email'] = $value->email;
+	            	  $arr[$key]['phone'] = $value->phone;
 	            	  $arr[$key]['reg_by'] = $value->reg_by;
 
 	            }

@@ -220,6 +220,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
       // Route::resource('customer', [UserController]);
       Route::post('customers/{id}', [UserController::class,'update']);
       Route::post('reset-password', [UserController::class,'resetPassword'])->name('reset_password');
+      Route::post('update_tcs', [UserController::class,'updateTcs']);
 
       
     // Route::group(['namespace'=>'Api\Modules'],function(){
