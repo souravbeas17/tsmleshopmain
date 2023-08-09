@@ -299,7 +299,7 @@ class DashboardController extends Controller
 
 	        // ---------------- top 5 ytd cus ---------------------------
 
-	       
+	       $top_five_todate = date("Y-m-t",strtotime($fromdate));
             $ytddata = array();
 
 	        $ytd = DB::table('orders')
@@ -307,7 +307,7 @@ class DashboardController extends Controller
 	               ->leftjoin('users','quotes.user_id','users.id') 
 	               ->select('users.org_name','users.id as custid','quotes.rfq_no','quotes.id') 
 	               ->whereDate('orders.created_at','>=', $fromdate)
-            	   ->whereDate('orders.created_at','<=', $todate)
+            	   ->whereDate('orders.created_at','<=', $top_five_todate)
 	               ->where('users.zone',$getuser->zone)
 	               ->whereNull('quotes.deleted_at')
 	               // ->where('orders.status',2)  
