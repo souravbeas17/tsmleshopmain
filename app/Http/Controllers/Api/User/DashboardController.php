@@ -298,8 +298,12 @@ class DashboardController extends Controller
 
 
 	        // ---------------- top 5 ytd cus ---------------------------
-
-	       $top_five_todate = date("Y-m-t",strtotime($fromdate));
+	        if( $request->todatem ){
+	        	$top_five_todate = $request->todatem;
+	        }else{
+	        	$top_five_todate = date("Y-m-t",strtotime($fromdate));
+	        }
+	        
             $ytddata = array();
 
 	        $ytd = DB::table('orders')
