@@ -23,6 +23,7 @@ use Mail;
 use DB;
 use DateTime;
 use Nullix\CryptoJsAes\CryptoJsAes;
+use Storage;
 
 class UserController extends Controller
 {
@@ -1157,11 +1158,14 @@ class UserController extends Controller
 
          try{
 
-             $image = $request->file('tcsUpdated'); 
-             $filename = time() . '-' . rand(1000, 9999) . '.' . $image->getClientOriginalExtension();
-             $image->move("storage/app/public/user",$filename);
-             $userData['tcs'] = $filename;
+              $image = $request->file('tcsUpdated'); 
 
+              $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
+
+              Storage::putFileAs('public/user', $image, $filename);
+             $userData['tcs'] = $filename;
+             
+             // dd($userData);
              User::where('id',$request->id)->update($userData);
 
              $msg = "Tcs Updated successfully";
