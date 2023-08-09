@@ -299,7 +299,7 @@ class DashboardController extends Controller
 
 	        // ---------------- top 5 ytd cus ---------------------------
 
-	        
+	       
             $ytddata = array();
 
 	        $ytd = DB::table('orders')
@@ -310,7 +310,7 @@ class DashboardController extends Controller
             	   ->whereDate('orders.created_at','<=', $todate)
 	               ->where('users.zone',$getuser->zone)
 	               ->whereNull('quotes.deleted_at')
-	               ->where('orders.status',2)  
+	               // ->where('orders.status',2)  
 	               ->groupBy('orders.rfq_no')
 	               ->get();
 
