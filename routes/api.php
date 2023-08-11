@@ -90,7 +90,7 @@ Route::post('verify-mobile-otp',[UserController::class,'verifyMobileOtp'])->name
 Route::get('register_email', [UserController::class,'registerEmail']);
 Route::post('login', [AuthController::class,'login']);
 Route::post('send-login-otp', [AuthController::class,'sendLoginOtp'])->name('send_login_otp');
-Route::post('chk_email', [UserController::class,'chkEmail']);
+Route::post('chk_email', [UserController::class,'chkEmail'])->middleware(['throttle:3,1']);
 Route::post('password-email', [AuthController::class,'sendResetLinkEmail'])->name('user.password.email');
 Route::post('password-update', [AuthController::class,'reset'])->name('user.password.update');
 Route::post('password-reset', [UserController::class,'passreset']);
