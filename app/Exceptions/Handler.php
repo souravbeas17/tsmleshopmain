@@ -40,11 +40,8 @@ class Handler extends ExceptionHandler
         // });
 
         $this->renderable(function (ThrottleRequestsException $e) {
-            $getPathInfo = $e->getTrace()[0]['args'][0]->getPathInfo();
-            $explodes = explode('/', $getPathInfo);
-            foreach ($explodes as $key => $value) {
-                $pathInfo = $value;
-            }
+            
+            $pathInfo = last(request()->segments());
             if($pathInfo == 'chk_email'){
                 return response()->json(['status'=>$e->getCode(),'message' =>'success','result'=>'Too many attempts'],200);
             }
