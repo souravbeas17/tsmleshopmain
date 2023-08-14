@@ -444,8 +444,8 @@ class DashboardController extends Controller
    		 }
    		 else if ($getuser->user_type == 'Sales' || $getuser->user_type == 'SM'|| $getuser->user_type == 'OPT') { 
 
-
-   		 	// dd($fromdate,$todate);
+   		 	
+	        //dd($fromdate,$monthly_todate);
    		 	// Show data according to financial year.....
    		 	$volumeCon = DB::table('quotes')
    		 	 	->select('quantity') 
@@ -547,13 +547,17 @@ class DashboardController extends Controller
 
 
 	        // Show data according to month .....
-	         
+	         if( $request->todatem ){
+	        	$monthly_todate = $request->todatem;
+	        }else{
+	        	$monthly_todate = date("Y-m-t",strtotime($fromdate));
+	        }
 
 	        $getrfqno = DB::table('quotes')
 	        	->select('quotes.id')
 	            ->where('quotes.kam_status',4) 
 	            ->whereDate('quotes.created_at','>=', $fromdate)
-                ->whereDate('quotes.created_at','<=', $todate) 
+                ->whereDate('quotes.created_at','<=', $monthly_todate) 
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('rfq_no')
 	            ->get(); 
@@ -578,7 +582,7 @@ class DashboardController extends Controller
 	        	->select('quotes.id')
 	            ->where('quotes.kam_status',4)
 	            ->whereDate('quotes.created_at','>=', $fromdate)
-                ->whereDate('quotes.created_at','<=', $todate)
+                ->whereDate('quotes.created_at','<=', $monthly_todate)
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('rfq_no')
 	            ->get(); 
@@ -603,7 +607,7 @@ class DashboardController extends Controller
 	        	->select('quotes.id')
 	            ->where('quotes.kam_status',4)  
 	            ->whereDate('quotes.created_at','>=', $fromdate)
-                ->whereDate('quotes.created_at','<=', $todate)
+                ->whereDate('quotes.created_at','<=', $monthly_todate)
 	            ->whereNull('quotes.deleted_at')
 	            ->groupBy('rfq_no')
 	            ->get(); 
