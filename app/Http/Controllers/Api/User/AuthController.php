@@ -114,12 +114,12 @@ class AuthController extends Controller
            
             if ($chkuser == null) {
               return response()->json([
-                'success' => false,'message' => 'Invalid Email']);
+                'success' => false,'message' => 'Invalid credentials']);
             }
             $chkuserpass  = \Hash::check($decrypted['password'], $chkuser->password);
             if ($chkuserpass == false) {
                 return response()->json([ 
-                'success' => false,'message' => 'Invalid Password']);
+                'success' => false,'message' => 'Invalid credentials']);
                
               } 
             }
