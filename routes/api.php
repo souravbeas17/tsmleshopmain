@@ -481,6 +481,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 
       Route::get('dashboard_cam_cus_list/{id}',[DashboardRedirectController::class,'dashCamCusList']);
       Route::get('dashboard_vol_con/{id}',[DashboardRedirectController::class,'dashboardVolCon']);
+      Route::get('dashboard_cam_cus_doc_view/{id}',[DashboardRedirectController::class,'dashCamCusDocView']);
 
     // ----------------------------------------------------------------------
 

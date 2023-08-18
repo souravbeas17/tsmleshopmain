@@ -243,4 +243,39 @@ class DashboardRedirectController extends Controller
 	        
 
    }
+
+   /**
+    * Display a document view of the customers.
+    *
+    * @return \Illuminate\Http\Response
+    */
+   public function dashCamCusDocView($id)
+   {
+      try{
+        $customer = DB::table('users')  ->where('users.id',$id)->first();
+
+        	 
+		$data['address_proof_file'] = $customer->address_proof_file;
+		$data['cancel_cheque_file'] = $customer->cancel_cheque_file;
+		$data['pan_card_file'] = $customer->pan_card_file;
+		$data['gst_certificate'] = $customer->gst_certificate;
+		$data['turnover_declare'] = $customer->turnover_declare;
+		$data['itr_last_yr'] = $customer->itr_last_yr;
+		$data['form_d'] = $customer->form_d;
+		$data['registration_certificate'] = $customer->registration_certificate;
+		$data['file_link'] = asset('storage/app/public/user/');
+
+	    return response()->json(['status'=>1,
+          'message' =>'success',
+          'result' => $data],
+          config('global.success_status'));
+
+
+      }catch(\Exception $e){
+
+       return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+     }
+	        
+
+   }
 }

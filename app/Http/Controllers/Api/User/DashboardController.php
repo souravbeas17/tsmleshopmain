@@ -407,7 +407,7 @@ class DashboardController extends Controller
 
 	            
 	            
-	            $total_price_quantity = $total_quantity = 0;
+	            $total_price_quantity = $total_quantity = $total_price = 0;
 	            foreach ($getUserunique as $key => $value) {
 	            	$getUserwiserfq = DB::table('quotes') 
 		            ->select('quotes.id','quotes.user_id','quotes.rfq_no')
@@ -436,11 +436,18 @@ class DashboardController extends Controller
 			        }
 			        $total_price_quantity = $sub_total_price * $sub_total_quantity;
 			        $total_quantity = $total_quantity + $sub_total_quantity;
-		            
+		            $total_price = $total_price + $sub_total_price;
 	            }
-	            
-		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $total_quantity;
-		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($total_price_quantity);
+	            if($total_quantity == 0){
+		        	$average_kam_price = 0;
+		        	$total_quantityy = 0;
+		        }else{
+		        	$average_kam_price = $total_price / $total_quantity;
+		        	$total_quantityy = $total_price_quantity / $total_quantity;
+		        }
+
+		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = round($total_quantityy);
+		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($average_kam_price);
 		        
 				$dateObj   = DateTime::createFromFormat('!m', $month);
 				$monthName = $dateObj->format('F');
