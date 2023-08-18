@@ -394,43 +394,55 @@ class DashboardController extends Controller
         	foreach ($months as $k => $monthh) {
         		$month = $monthh->format("m");
         		$yearName = $monthh->format("Y");
-        		$getUserMonthlyAveragePrice = DB::table('quotes') 
-	            //->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+        		$month = "07";
+        		
+	            $getUserunique = DB::table('quotes') 
 	            ->leftjoin('users','quotes.user_id','users.id')
-	            ->select('quotes.id')
+	            ->select('quotes.user_id')
 	            ->whereDate('quotes.created_at','>=', date($yearName."-".$month."-01"))
             	->whereDate('quotes.created_at','<=', date($yearName."-".$month."-t"))
 	            ->where('quotes.kam_status', '!=', 2)
 	            ->where('users.zone',$getuser->zone)
 	            ->whereNull('quotes.deleted_at')
-	            ->get();
+	            ->groupBy('quotes.user_id')
+	            ->get()->toArray();
 
-	            //dd($getUserMonthlyAveragePrice);	
-	            $quote_quantity = $quote_kamprice = $average_kam_price = 0;
-	            //$MonthlyAveragePriceMonthData = [];
-		        foreach ($getUserMonthlyAveragePrice as $key => $value) {
+	            
+	            
+	            $total_price_quantity = $total_quantity = 0;
+	            foreach ($getUserunique as $key => $value) {
+	            	$getUserwiserfq = DB::table('quotes') 
+		            ->select('quotes.id','quotes.user_id','quotes.rfq_no')
+		            ->whereDate('quotes.created_at','>=', date($yearName."-".$month."-01"))
+	            	->whereDate('quotes.created_at','<=', date($yearName."-".$month."-t"))
+		            ->where('quotes.kam_status', '!=', 2)
+		            ->where('quotes.user_id',$value->user_id)
+		            ->whereNull('quotes.deleted_at')
+		            ->groupBy('quotes.rfq_no')
+		            ->get()->toArray();	
+		            $sub_total_price = $sub_total_quantity = 0;
+		            foreach ($getUserwiserfq as $key => $value2) {
 		            	
-		        	$getUserMonthlyAveragePriceQuteSheduleQuantity = DB::table('quote_schedules')
-	   		 	 	->select('quote_schedules.quantity') 
-		            ->where('quote_schedules.quote_id',$value->id)
-		            ->sum('quote_schedules.quantity');
-		            $getUserMonthlyAveragePriceQuteSheduleKamprice = DB::table('quote_schedules')
-	   		 	 	->select('quote_schedules.kam_price') 
-		            ->where('quote_schedules.quote_id',$value->id)
-		            ->sum('quote_schedules.kam_price');
-
-		            $quote_quantity = $quote_quantity + $getUserMonthlyAveragePriceQuteSheduleQuantity;
-		            $quote_kamprice = $quote_kamprice + $getUserMonthlyAveragePriceQuteSheduleKamprice;
+		            	$totalPuser = DB::table('quote_schedules')
+		   		 	 	->select('quote_schedules.kam_price') 
+			            ->where('quote_schedules.quote_id',$value2->id)
+			            ->sum('quote_schedules.kam_price');
+			        	$totalQuser = DB::table('quote_schedules')
+		   		 	 	->select('quote_schedules.quantity') 
+			            ->where('quote_schedules.quote_id',$value2->id)
+			            ->sum('quote_schedules.quantity');
+			            
+			            $sub_total_price = $sub_total_price + $totalPuser;
+			            $sub_total_quantity = $sub_total_quantity + $totalQuser;
+			            
+			        }
+			        $total_price_quantity = $sub_total_price * $sub_total_quantity;
+			        $total_quantity = $total_quantity + $sub_total_quantity;
 		            
-		        }
-		        if($quote_quantity == 0){
-		        	$average_kam_price = 0;
-		        }else{
-		        	$average_kam_price = $quote_kamprice / $quote_quantity;
-		        }
-		        
-		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $quote_quantity;
-		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($average_kam_price);
+	            }
+	            
+		        $MonthlyAveragePriceMonthData[$k]['total_quantity'] = $total_quantity;
+		        $MonthlyAveragePriceMonthData[$k]['average_kam_price'] = round($total_price_quantity);
 		        
 				$dateObj   = DateTime::createFromFormat('!m', $month);
 				$monthName = $dateObj->format('F');
