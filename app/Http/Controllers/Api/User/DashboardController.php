@@ -394,8 +394,6 @@ class DashboardController extends Controller
         	foreach ($months as $k => $monthh) {
         		$month = $monthh->format("m");
         		$yearName = $monthh->format("Y");
-        		$month = "07";
-        		
 	            $getUserunique = DB::table('quotes') 
 	            ->leftjoin('users','quotes.user_id','users.id')
 	            ->select('quotes.user_id')
