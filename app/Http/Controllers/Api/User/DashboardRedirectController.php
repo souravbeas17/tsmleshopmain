@@ -42,6 +42,7 @@ class DashboardRedirectController extends Controller
 
 	            foreach ($customer as $key => $value) {
 	            	 
+	            	  $arr[$key]['user_id'] = $value->id;
 	            	  $arr[$key]['user_code'] = $value->user_code;
 	            	  $arr[$key]['org_name'] = $value->org_name;
 	            	  $arr[$key]['email'] = $value->email;
