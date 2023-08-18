@@ -492,6 +492,7 @@ Route::post('admin-login', [AdminAuthController::class,'Adminlogin']);
 Route::post('admin-register', [AdminAuthController::class,'Adminregister']);
 
 Route::post('user-bulk-upload',[BulkController::class,'storeUser']);
+Route::post('distributor-upload',[BulkController::class,'storeDistributor']);
 Route::post('bulk-product-upload',[BulkController::class,'storeProduct']);
 Route::post('admin-forgetpass-mail',[AdminPasswordController::class,'adminForgetpassMail']);
 Route::post('admin-update-pass',[AdminPasswordController::class,'adminUpdatePass']);
