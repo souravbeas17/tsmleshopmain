@@ -323,13 +323,17 @@ class AdminUserManageController extends Controller
         try{         
            
              
-            $addressdata = DB::table('users')
+            $response['addressdata'] = DB::table('users')
                     ->leftjoin('address','users.id','address.user_id')
                     ->where('users.id',$request->userId) 
                     ->select('users.id as uid','users.org_name as com_name','users.zone as user_zone','users.user_code as user_code','address.*')
                     ->get();  
-            // dd($addressdata);
-            return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata],200);
+            
+            $response['documents'] =  User::select('address_proof_file','cancel_cheque_file','pan_card_file','gst_certificate','turnover_declare','itr_last_yr','form_d','registration_certificate','tcs')->where('id',$request->userId)->first();
+            
+            $response['file_link'] = asset('storage/app/public/user/');
+
+            return response()->json(['status'=>1,'message' =>'success.','result' => $response],200);
             
           
           // $getuser = DB::table('users')->where('users.id',$request->userId)->first();
