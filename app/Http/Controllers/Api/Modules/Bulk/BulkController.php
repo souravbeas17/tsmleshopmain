@@ -33,7 +33,8 @@ class BulkController extends Controller
             
 
             foreach($sheetData as $val)
-            {
+            {   
+                // dd($val[4]);
                 if(!empty($val[18]) && (!empty($val[15]) || !empty($val[64])))
                 {
 
@@ -66,6 +67,10 @@ class BulkController extends Controller
                 $user->addressone = $val[6];
                 $user->zone = $val[10];
                 $user->reg_by = 'U';
+                if ($val[4]=='Distributor') {
+                   $user->is_dist = 1;
+                }
+                
 
                 $user->save();
                 }
