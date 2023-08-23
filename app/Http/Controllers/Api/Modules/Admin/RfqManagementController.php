@@ -196,6 +196,10 @@ class RfqManagementController extends Controller
           {
           foreach ($quote as $key => $value) {
             
+            $transct = DB::table('sc_transactions')->where('schedule',$value->schedule_no)->where('rfq_no',$value->rfq_no)->select('code','value')->get()->toArray();
+            
+            $val = array_column($transct, 'value', 'code');
+            // dd($transct);
 
             $result[$key]['code'] = $value->user_code;
             $result[$key]['user'] = $value->org_name;
@@ -210,6 +214,15 @@ class RfqManagementController extends Controller
             $result[$key]['to_date'] = date_format(date_create($value->to_date),"d-m-Y");
             $result[$key]['from_date'] = date_format(date_create($value->from_date),"d-m-Y");
             $result[$key]['valid_till'] = date_format(date_create($value->valid_till),"d-m-Y");
+            $result[$key]['bpt'] = array_key_exists("BPT01",$val) ? $val['BPT01'] : 0;
+            $result[$key]['qtypre'] = array_key_exists("QP01",$val) ? $val['QP01'] : 0;
+            $result[$key]['del_cost'] = array_key_exists("DC01",$val) ? $val['DC01'] : 0;
+            $result[$key]['int_rate'] = array_key_exists("IR01",$val) ? $val['IR01'] : 0;
+            $result[$key]['cre_cost'] = array_key_exists("CC01",$val) ? $val['CC01'] : 0;
+            $result[$key]['misc'] = array_key_exists("MC01",$val) ? $val['MC01'] : 0;
+            $result[$key]['ppa'] = array_key_exists("PPA01",$val) ? $val['PPA01'] : 0;
+            $result[$key]['final'] = array_key_exists("FP01",$val) ? $val['FP01'] : 0;
+
            
 
           }

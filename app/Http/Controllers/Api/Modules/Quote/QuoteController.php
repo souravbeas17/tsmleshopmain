@@ -1695,12 +1695,29 @@ class QuoteController extends Controller
 
        try{
 
-             
+             $ordr_ct = Order::where('po_no','LIKE','FAM%')->get()->toArray();
+            
 
+             if(empty($ordr_ct))
+             {
+                   $po_no = 'FAM'.date("y").date("m").'0000';
+             }else{
+               
+                 $ordr = Order::orderBy('id','desc')->limit(1)->first();
+                 $rand_no = substr($ordr->po_no,7);
+                 
+                 $new_no = $rand_no + 1;
+                 $count = strlen($new_no);
+                 $invID = str_pad($new_no, 4, '0', STR_PAD_LEFT);
+                 $po_no = 'FAM'.date("y").date("m").$invID;
+             }
+
+            
+            // dd($po_no);
             $poArr = array();
 
             $poArr['rfq_no'] = $request->input('rfqNo');
-            $poArr['po_no'] = $request->input('po_no');
+            $poArr['po_no'] = $po_no;
             $poArr['amdnt_no'] = $request->input('amdnt_no');
             // dd($request->file('letterhead')); 
             // sleep(10);
@@ -2896,8 +2913,20 @@ class QuoteController extends Controller
             // echo $request->input('po_no'.$value)."<br>";
             // echo $request->input('po_date'.$value)."<br>";
             // echo $request->input('type'.$value)."<br>";
-            
-
+            $ordr_ct = Order::where('po_no','LIKE','FAM%')->get()->toArray();
+            if(empty($ordr_ct))
+             {
+                   $po_no = 'FAM'.date("y").date("m").'0000';
+             }else{
+               
+                 $ordr = Order::orderBy('id','desc')->limit(1)->first();
+                 $rand_no = substr($ordr->po_no,7);
+                 
+                 $new_no = $rand_no + 1;
+                 $count = strlen($new_no);
+                 $invID = str_pad($new_no, 4, '0', STR_PAD_LEFT);
+                 $po_no = 'FAM'.date("y").date("m").$invID;
+             }
 
             if($request->hasFile('letterHead'.$value))
             {
@@ -2913,7 +2942,7 @@ class QuoteController extends Controller
             }
             
             $poArr['rfq_no'] = $request->input('rfqNo'.$value);
-            $poArr['po_no'] = $request->input('po_no'.$value);
+            $poArr['po_no'] = $po_no;
             $poArr['amdnt_no'] = "";
             $poArr['type'] = $request->input('type'.$value);
             $poArr['sche'] = $request->input('sche'.$value);

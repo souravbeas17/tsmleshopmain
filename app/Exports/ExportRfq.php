@@ -37,7 +37,15 @@ class ExportRfq implements FromCollection, WithHeadings
             'Ship To',
             'To Date',
             'From Date',
-            'Valid Till'          
+            'Valid Till',
+            'Basic Price',
+            'Quality Premium',
+            'Delivery Cost',
+            'Interest Rate',
+            'Credit Cost For',
+            'Misc. Cost',
+            'Proposed Price Adjustment',
+            'Final Price'          
         ];
     }
 }

@@ -1158,6 +1158,8 @@ class UserController extends Controller
 
          try{
 
+              $cc_email = array();
+
               $image = $request->file('tcsUpdated'); 
 
               $filename = rand(1000,9999).'-'.$image->getClientOriginalName();
@@ -1167,6 +1169,34 @@ class UserController extends Controller
              
              // dd($userData);
              User::where('id',$request->id)->update($userData);
+
+             $name  = User::where('id',$request->id)->first();
+
+             $cam = User::where('zone',$name->zone)->where('id','!=',$request->id)->where('user_type','Kam')->get()->toArray();
+
+             foreach ($cam as $key => $value) {
+                 
+                  array_push($cc_email,$value['email']);
+             }
+
+             $admins = Admin::get();
+
+             foreach ($admins as $key => $value) {
+                 
+                  array_push($cc_email,$value->email);
+             }
+
+             $sub = 'TCS updated';
+ 
+             $html = 'mail.updatetcsmail';
+
+             $data['name'] = $name->org_name;
+             $email = $cc_email[0];
+
+             // dd($cc_email);
+
+
+         (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email);
 
              $msg = "Tcs Updated successfully";
              return response()->json(['status'=>1,'message' =>$msg],200);
