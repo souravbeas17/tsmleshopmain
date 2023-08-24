@@ -458,11 +458,15 @@
                   $result[$key]['from'] = current(explode("-",$element));
                   $result[$key]['to'] = substr($element, strrpos($element, '-') + 1);
                   $size = $result[$key]['from'].'-'.$result[$key]['to'];
-                  $result[$key]['mat_no'] = $this->getMatNo($catData->id,$catData->plant_code,$size);
-                  array_push($mat_no_up,$this->getMatNo($catData->id,$catData->plant_code,$size));
+                  $matval = $this->getMatNo($catData->id,$catData->plant_code,$size);
+                  $result[$key]['mat_no'] = $matval->mat_no;
+                  $result[$key]['plant_id'] = $matval->plant_id;
+                  $result[$key]['plant_name'] = $matval->plant_name;
+                  // array_push($mat_no_up,$this->getMatNo($catData->id,$catData->plant_code,$size));
                   // dd($result[$key]['mat_no']);
                 }
-
+                // dd($result);
+                
 
                 // dd($mat_no_up);
                 // $catadetails['size'] = $getsize;
@@ -488,10 +492,18 @@
         public function getMatNo($subcatid,$planttype,$size)
         {
           // dd($subcatid,$planttype,$size);
-          $getmetno = DB::table('product_size_mat_no')->where('sub_cat_id',$subcatid)->where('plant_type',$planttype)->where('product_size',$size)->first();
-          // dd($getmetno->mat_no);
+          // $getmetno = DB::table('product_size_mat_no')->where('sub_cat_id',$subcatid)->where('plant_type',$planttype)->where('product_size',$size)->first();
+
+          $getmetno = DB::table('product_size_mat_no')
+                      ->leftjoin('plants','product_size_mat_no.plant_id','plants.id')
+                      ->where('sub_cat_id',$subcatid)
+                      ->where('plant_type',$planttype)
+                      ->where('product_size',$size)
+                      ->select('product_size_mat_no.id as pro_size_mat_id','product_size_mat_no.mat_no as mat_no','product_size_mat_no.plant_id as plant_id','plants.name as plant_name')
+                      ->first();
+          // dd($getmetno);
           if (!empty($getmetno)) {
-            return $getmetno->mat_no;
+            return $getmetno;
           }
           else{
             return null;
