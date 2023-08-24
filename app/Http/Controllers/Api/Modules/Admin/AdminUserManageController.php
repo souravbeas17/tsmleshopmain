@@ -289,10 +289,10 @@ class AdminUserManageController extends Controller
     public function blockCustomerAdminMulti(Request $request)
     {
       try{   
-          // dd('ok');
+          
 
           $cust_id = $request->userIds; 
-          // dd($cust_id);
+          
 
           $input['user_status'] = $request->status;  
 
