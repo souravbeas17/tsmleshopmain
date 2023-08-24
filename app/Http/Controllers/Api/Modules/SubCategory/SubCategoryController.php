@@ -280,7 +280,7 @@
                     $psize2 = explode(',',$psize1);
                     foreach ($mt3 as $key => $value) 
                     {
-                      $dv['plant_id'] = 1;
+                      $dv['plant_id'] = $request->plant_id;
                       $dv['plant_type'] = $request->plant_code;
                       $dv['sub_cat_id'] = $subCategoryData->id;
                       $dv['product_size'] = $psize2[$key];
@@ -361,7 +361,7 @@
                     $psize2 = explode(',',$psize1);
                     foreach ($mt3 as $key => $value) 
                     {
-                      $dv['plant_id'] = 1;
+                      $dv['plant_id'] = $request->plant_id;
                       $dv['plant_type'] = $request->plant_code;
                       $dv['sub_cat_id'] = $request->sub_cat_id;
                       $dv['product_size'] = $psize2[$key];
