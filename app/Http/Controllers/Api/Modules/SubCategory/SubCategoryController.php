@@ -52,7 +52,7 @@
                      
                     $removed = array_shift($sheetData);
                     $data = json_encode($sheetData);
-
+                    // dd($sheetData);
                     foreach($sheetData as $k => $val)
                     {
                        $product_id = Product::where('pro_name',trim($val[0]))->first();
@@ -97,10 +97,11 @@
 
                              $sub_cat = ProductSubCategory::create($input);
 
-
+                             $getplant = DB::table('plants')->where('name',$val[14])->where('type_2',$val[11])->first();
+                             // dd($getplant);
                              foreach ($d as $key => $value) {
                                  
-                                 $arr['plant_id'] = 1;
+                                 $arr['plant_id'] = $getplant->id;
                                  $arr['plant_type'] = $val[11];
                                  $arr['sub_cat_id'] = $sub_cat->id;
                                  $arr['product_size'] = $value;
@@ -148,8 +149,10 @@
 
                              foreach ($d as $key => $value) {
                                  
-                                 
-                                 $chkmatcode = DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])->first();
+                                 $getplant = DB::table('plants')->where('name',$val[14])->where('type_2',$val[11])->first();
+
+                                 $chkmatcode = DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])
+                                 ->where('plant_id',$getplant->id)->first();
 
                                  if(!empty($chkmatcode))
                                  {
@@ -157,11 +160,13 @@
                       
                                  $arr['mat_no'] = $matcode[$key];
 
-                                 DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])->update($arr);
+                                 DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])
+                                 ->where('plant_id',$getplant->id)->update($arr);
                                }
                                else{
+                                     
 
-                                     $arrup['plant_id'] = 1;
+                                     $arrup['plant_id'] = $getplant->id;
                                      $arrup['plant_type'] = $val[11];
                                      $arrup['sub_cat_id'] = $res->id;
                                      $arrup['product_size'] = $value;

@@ -34,15 +34,12 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-family:Arial; font-size:14px; font-weight:500; color:#000;margin-left: 5px;">
-                 {{@$data['name']}}, has updated their Tcs. Please login and check<span style="font-family:Arial; border-radius:17px;font-size:15px; font-weight:500; color:#FFF; display:inline-block; padding: 7px 12px; background-color: #ffc107;background-image: linear-gradient(326deg, #ffc107 0%, #ffc107 74%); text-decoration:none;"></span> .
+                 {{@$data['name']}}, has updated their Tcs. Please login and check.
                </p>
                <div style="display:block;overflow:hidden; width:100%; text-align:center; margin: 0px 0px 10px 0px;">
  
                </div>
-               <p style="font-family:Arial; font-size:14px; font-weight:500; color:#000;margin-left: 5px;">
-                  If you did not make this request, just ignore this email.Otherwise please click the link above to reset your password 
-                  
-               </p>
+              
                 
             </td>
         </tr>
