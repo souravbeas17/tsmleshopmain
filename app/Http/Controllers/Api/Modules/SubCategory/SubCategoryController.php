@@ -235,6 +235,7 @@
         // $mt = implode(",",$request->mat);
         // $mt3 = explode(',',$mt);
         // dd($mt3);
+        // dd($request->plant_id);
             $cataId = $request->cat_id;
             $chkcata = Category::where('id',$cataId)->first();
 
@@ -280,7 +281,7 @@
                     $psize2 = explode(',',$psize1);
                     foreach ($mt3 as $key => $value) 
                     {
-                      $dv['plant_id'] = $request->plant_id;
+                      $dv['plant_id'] = $request->plant_id[$key];
                       $dv['plant_type'] = $request->plant_code;
                       $dv['sub_cat_id'] = $subCategoryData->id;
                       $dv['product_size'] = $psize2[$key];
