@@ -99,7 +99,15 @@
 
                              $getplant = DB::table('plants')->where('name',$val[14])->where('type_2',$val[11])->first();
                              // dd($getplant);
-                             foreach ($d as $key => $value) {
+                             if (empty($getplant)) 
+                             {
+                               return response()->json(['status'=>0,
+                                        'message' =>'error',
+                                        'result' => 'Please provide correct plant name !'],
+                                        config('global.success_status'));
+                             }
+                             else{
+                              foreach ($d as $key => $value) {
                                  
                                  $arr['plant_id'] = $getplant->id;
                                  $arr['plant_type'] = $val[11];
@@ -109,7 +117,9 @@
 
                                  DB::table('product_size_mat_no')->insert($arr);
 
+                              }
                              }
+                             
                            }else{
 
                               return response()->json(['status'=>0,
@@ -153,26 +163,35 @@
 
                                  $chkmatcode = DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])
                                  ->where('plant_id',$getplant->id)->first();
-
-                                 if(!empty($chkmatcode))
+                                 if (empty($getplant)) 
                                  {
+                                   return response()->json(['status'=>0,
+                                            'message' =>'error',
+                                            'result' => 'Please provide correct plant name !'],
+                                            config('global.success_status'));
+                                 }
+                                 else{
+                                   if(!empty($chkmatcode))
+                                   {
 
-                      
-                                 $arr['mat_no'] = $matcode[$key];
+                        
+                                   $arr['mat_no'] = $matcode[$key];
 
-                                 DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])
-                                 ->where('plant_id',$getplant->id)->update($arr);
-                               }
-                               else{
-                                     
+                                   DB::table('product_size_mat_no')->where('sub_cat_id',$res->id)->where('product_size',$value)->where('plant_type',$val[11])
+                                   ->where('plant_id',$getplant->id)->update($arr);
+                                 }
+                                 else{
+                                       
 
-                                     $arrup['plant_id'] = $getplant->id;
-                                     $arrup['plant_type'] = $val[11];
-                                     $arrup['sub_cat_id'] = $res->id;
-                                     $arrup['product_size'] = $value;
-                                     $arrup['mat_no'] = $matcode[$key];
+                                       $arrup['plant_id'] = $getplant->id;
+                                       $arrup['plant_type'] = $val[11];
+                                       $arrup['sub_cat_id'] = $res->id;
+                                       $arrup['product_size'] = $value;
+                                       $arrup['mat_no'] = $matcode[$key];
 
-                                     DB::table('product_size_mat_no')->insert($arrup);
+                                       DB::table('product_size_mat_no')->insert($arrup);
+                                 }
+
                                }
 
                              }
