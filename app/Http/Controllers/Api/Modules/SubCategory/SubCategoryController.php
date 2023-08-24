@@ -22,6 +22,7 @@
   use App\Models\Models\PriceCalculation;
   use App\Models\Models\ThresholdLimits;
   use App\Models\Models\Freights; 
+  use App\Models\Models\Plant; 
   use App\ServicesMy\AdminLogsService;
   use File; 
   use Storage;
@@ -581,7 +582,74 @@
             
         }
 
-        
+        /**
+         * This is for get plant name. 
+         * @param  \App\Product  $product
+         * @return \Illuminate\Http\Response
+        */
+        public function getPlantName(Request $request)
+        {   
+            
+            try{
+                $type = $request->type;         
+                $plants = Plant::where('type_2',$type)->orderBy('id','desc')->get();
+                $plantName = [];
+                foreach ($plants as $key => $value) 
+                {
 
-         
+                    $plantName[] = array(
+                        "id" => $value->id,
+                        "code" => $value->code,
+                        "type" => $value->type,
+                        "name" => $value->name,
+                        "type_2" => $value->type_2,
+                        "address" => $value->address,
+                        "state" => $value->state,
+                        "country" => $value->country,
+                    );
+                } 
+              
+             return response()->json(['status'=>1,'message' =>'success.','result' => $plantName],200);
+
+            }catch(\Exception $e){
+                $response['error'] = $e->getMessage();
+                return response()->json([$response]);
+            }
+        }
+
+        /**
+         * This is for get plant address. 
+         * @param  \App\Product  $product
+         * @return \Illuminate\Http\Response
+        */
+        public function getPlantAddress(Request $request)
+        {   
+            
+            try{
+                $type = $request->type;
+                $name = $request->name;         
+                $plants = Plant::where(['type_2'=>$type,'name'=>$name])->orderBy('id','desc')->get();
+                $plantAddress = new \stdClass();
+                foreach ($plants as $key => $value) 
+                {
+
+                    $plantAddress = array(
+                        "id" => $value->id,
+                        "code" => $value->code,
+                        "type" => $value->type,
+                        "name" => $value->name,
+                        "type_2" => $value->type_2,
+                        "address" => $value->address,
+                        "state" => $value->state,
+                        "country" => $value->country,
+                    );
+                } 
+              
+             return response()->json(['status'=>1,'message' =>'success.','result' => $plantAddress],200);
+
+            }catch(\Exception $e){
+                $response['error'] = $e->getMessage();
+                return response()->json([$response]);
+            }
+        } 
     }

@@ -714,6 +714,10 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
 
      Route::get('get_rejected_order_admin',[PoOptController::class,'getRejectedOrderAdmin']);
 
+     Route::get('get_plant_name',[SubCategoryController::class,'getPlantName']);
+     Route::get('get_plant_address',[SubCategoryController::class,'getPlantAddress']);
+     Route::get('get_plant_addr/{id}',[QuoteController::class,'getPlantAddr']);
+
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
