@@ -575,6 +575,7 @@ class PriceManagementController extends Controller
                 'price_calculation.Interest_Rate as Interest_Rate',
                 'price_calculation.CAM_Discount as CAM_Discount',
                 'price_calculation.plant as plant',
+                'price_calculation.Price_Premium_sing as Price_Premium_sing',
                 'price_calculation.status as status',
                 'products.id as product_id',
                 'products.pro_name as product_title',
@@ -600,6 +601,7 @@ class PriceManagementController extends Controller
             $data['price_premium'] = $ThresholdData->Price_Premium;
             $data['misc_expense'] = $ThresholdData->Misc_Expense;
             $data['plant'] = $ThresholdData->plant;
+            $data['Price_Premium_sing'] = $ThresholdData->Price_Premium_sing;
             // $data['delivery_cost'] = $ThresholdData->BPT_Price; 
             $data['interest_rate'] = $ThresholdData->Interest_Rate;
             $data['cam_discount'] = $ThresholdData->CAM_Discount;
@@ -664,6 +666,7 @@ class PriceManagementController extends Controller
         $input['Interest_Rate'] = $request->interest_rate;
         $input['CAM_Discount'] = $request->cam_discount;
         $input['gst_per'] = $request->cam_discount;
+        $input['Price_Premium_sing'] = $request->Price_Premium_sing;        
         $input['plant'] = $request->plant;
         $input['manage_by'] = Auth::user()->id;
 
