@@ -170,6 +170,7 @@ class PriceManagementController extends Controller
         $input['Interest_Rate'] = $request->Interest_Rate;
         $input['CAM_Discount'] = $request->CAM_Discount;
         $input['gst_per'] = $request->gst_per;
+        $input['plant'] = $request->plant;
         $input['manage_by'] = Auth::user()->id;
           // dd($input);
         $getthoprice = PriceCalculation::where('pro_id',$request->pro_id)
@@ -476,9 +477,11 @@ class PriceManagementController extends Controller
                     {
                        $product_id = Product::where('pro_name',trim($val[0]))->first();
                        $category_id = Category::where('cat_name',trim($val[1]))->first();
-                       $subcategory_id = ProductSubCategory::where('sub_cat_name',trim($val[2]))->where('plant_code',$val[10])->first();
-                       // dd($subcategory_id);
-                       if(!empty($product_id) && !empty($category_id) & !empty($subcategory_id)){
+                       $subcategory_id = ProductSubCategory::where('sub_cat_name',trim($val[2]))->where('plant_code',$val[10])->first()
+                       ;
+                       $getplant = DB::table('plants')->where('name',$val[11])->where('type_2',$val[10])->first();
+                       // dd($getplant);
+                       if(!empty($product_id) && !empty($category_id) && !empty($subcategory_id) && !empty($getplant)){
                       
                         $res = PriceCalculation::where('pro_id',$product_id->id)->where('cat_id',$category_id->id)->where('sub_cat_id',$subcategory_id->id)->where('size',$val[3])->where('type',$val[10])->get()->toArray();
                         // dd($res);
@@ -500,6 +503,7 @@ class PriceManagementController extends Controller
                             $user['CAM_Discount'] = $val[8];
                             $user['Interest_Rate'] = $val[9];
                             $user['type'] = $val[10];
+                            $user['plant'] = $val[11];
                            
 
                             
@@ -570,6 +574,7 @@ class PriceManagementController extends Controller
                 'price_calculation.Misc_Expense as Misc_Expense',
                 'price_calculation.Interest_Rate as Interest_Rate',
                 'price_calculation.CAM_Discount as CAM_Discount',
+                'price_calculation.plant as plant',
                 'price_calculation.status as status',
                 'products.id as product_id',
                 'products.pro_name as product_title',
@@ -594,6 +599,7 @@ class PriceManagementController extends Controller
             $data['bpt_price'] = $ThresholdData->basic_price;
             $data['price_premium'] = $ThresholdData->Price_Premium;
             $data['misc_expense'] = $ThresholdData->Misc_Expense;
+            $data['plant'] = $ThresholdData->plant;
             // $data['delivery_cost'] = $ThresholdData->BPT_Price; 
             $data['interest_rate'] = $ThresholdData->Interest_Rate;
             $data['cam_discount'] = $ThresholdData->CAM_Discount;
@@ -658,6 +664,7 @@ class PriceManagementController extends Controller
         $input['Interest_Rate'] = $request->interest_rate;
         $input['CAM_Discount'] = $request->cam_discount;
         $input['gst_per'] = $request->cam_discount;
+        $input['plant'] = $request->plant;
         $input['manage_by'] = Auth::user()->id;
 
           // dd($input);
