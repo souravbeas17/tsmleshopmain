@@ -791,13 +791,13 @@ class PriceManagementController extends Controller
             }
 
             $getPlantCode = Plant::select('type_2')->where('name',$decrypted['plantName'])->first();
-             
+             // dd($getPlantCode);
             $gerSubCatName = ProductSubCategory::select('sub_cat_name')->where('id',$decrypted['sub_cat_id'])->first(); 
-
+            // dd($decrypted['sub_cat_id']);
             $getsucatid = ProductSubCategory::where('sub_cat_name',$gerSubCatName->sub_cat_name)->where('plant_code',$getPlantCode->type_2)->first();
-            
+            // dd($getsucatid);
 
-            $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$getsucatid->id)->where('size',$decrypted['size'])->first();
+            $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$getsucatid->id)->where('size',$decrypted['size'])->where('plant',$decrypted['plantName'])->first();
             // dd($priceData);
             // if(isset($request->location))
             // {
