@@ -430,6 +430,7 @@ class AuthController extends Controller
                 $userArr['user_id'] = $userdata->id;
                 $userArr['user_name'] = $userdata->org_name;
                 $userArr['user_type'] = $userdata->user_type;
+                $userArr['is_dist'] = $userdata->is_dist;
                 $updata['is_loggedin'] = 1;
                 $updata['login_count'] = 0;
                 $updata['forgot_pass_date'] = null; 
