@@ -488,7 +488,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 });
 
 // Admin Routes....
-
+Route::post('admin-loginotp', [AdminAuthController::class,'adminloginotp']);
 Route::post('admin-login', [AdminAuthController::class,'Adminlogin']);
 Route::post('admin-register', [AdminAuthController::class,'Adminregister']);
 

@@ -7,9 +7,10 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\User;
-use App\Admin;
+use App\Models\Admin;
 use JWTAuth;
 use Validator;
+use App\ServicesMy\MailService;
 
 class AdminAuthController extends Controller
 {
@@ -108,5 +109,34 @@ class AdminAuthController extends Controller
             'token_type' => 'bearer',
             'expires_in' => auth()->guard('admins')->factory()->getTTL() * 60
         ]);
+    }
+
+    // -------------- admin login otp -------------------------------
+
+    public function adminloginotp(Request $request)
+    {   
+        try{
+        $datestime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +10 minutes"));
+        $inputotp['expiry'] =$datestime; 
+        $otp = random_int(100000, 999999);
+        $inputotp['otp'] =$otp; 
+        $categoryData = Admin::where('email',$request->email)->update($inputotp); 
+        $sub = "OTP For Login";
+        $html = 'mail.Otpverificationmail';
+        $data['otp'] = $otp;
+        $cc_email = "";
+        $email = $request->email;
+        // dd($email);
+        
+        (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
+
+        return response()->json(['status'=>1,'message' =>'success.','result' => 'Otp sent to email id'],200);
+             // return response()->json(['status'=>1,$response],200);
+              
+            
+            }catch(\Exception $e){
+                $response['error'] = $e->getMessage();
+                return response()->json([$response]);
+            }
     }
 }
