@@ -24,6 +24,8 @@ use DB;
 use DateTime;
 use Nullix\CryptoJsAes\CryptoJsAes;
 use Storage;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 class UserController extends Controller
 {
@@ -36,6 +38,23 @@ class UserController extends Controller
    public function testCorn(Request $request)
    { 
         // dd('testCorn');
+        $date = date('d');
+        // dd($date);
+        $d = '07';
+        // $data = DB::table('test')->first();
+        // // dd($data->$d);
+        // if ($data->$d) {
+            
+        //    dd('not');
+        // }
+        // else{
+        //     dd('hav');
+        // }
+        Schema::table('test', function($table) use ($date) {
+        $table->string($date)->after('name');
+        });
+        echo "ok";
+        exit();
         // $ins = DB::table('test_corn')->insert(['name'=>'Amit']);
         // echo "Data inserted !!!!";
 
