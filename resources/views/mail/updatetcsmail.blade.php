@@ -34,7 +34,7 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-family:Arial; font-size:14px; font-weight:500; color:#000;margin-left: 5px;">
-                 {{@$data['name']}}, has updated their Tcs. Please login and check.
+                 {{@$data['name']}}, has updated their TCS. Please login and check.
                </p>
                <div style="display:block;overflow:hidden; width:100%; text-align:center; margin: 0px 0px 10px 0px;">
  

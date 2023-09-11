@@ -1964,7 +1964,7 @@ class QuoteController extends Controller
            // ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
            ->leftjoin('users','quotes.user_id','users.id')
            ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status','orders.amdnt_no','orders.cus_po_no','orders.sche as orsche','quotes.id as qid')
-           ->orderBy('quotes.updated_at','desc');
+           ->orderBy('quotes.updated_at','desc')->orderBy('orders.po_no','desc');
            // ->groupBy('quotes.rfq_no');
            if(!empty($user_id))
            {

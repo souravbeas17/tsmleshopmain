@@ -9,6 +9,11 @@ use App\Exports\ExportAllRfq;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Models\Order;
 use DB;
+use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Writer\Common\Creator\Style\StyleBuilder;
+use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class RfqManagementController extends Controller
 {
@@ -329,8 +334,49 @@ class RfqManagementController extends Controller
 
 
           }
+           $curr = get_current_user();
            // dd($result);
-           return Excel::download(new ExportAllRfq($result), 'allrfqdump.xlsx');
+           
+             $user = "C:"."\\"."Users"."\\".$curr."\\"."Downloads"."\\"."test.xlsx";
+             // dd($user);
+                $writer = WriterEntityFactory::createXLSXWriter();
+              $writer->openToFile($user);
+
+              $cells = [
+                  WriterEntityFactory::createCell('Customer Name'),
+                  WriterEntityFactory::createCell('RFQ. No.'),
+                  WriterEntityFactory::createCell('RFQ Date'),
+                  WriterEntityFactory::createCell('Quantity'),
+                  WriterEntityFactory::createCell('Date'),
+                  WriterEntityFactory::createCell('Status'),
+                  WriterEntityFactory::createCell('Pending(days)'),
+                  WriterEntityFactory::createCell('Pending With'),
+                  WriterEntityFactory::createCell('PO No.'),
+                  WriterEntityFactory::createCell('PO Date'),
+              ];
+
+              $singleRow = WriterEntityFactory::createRow($cells);
+              $writer->addRow($singleRow);
+
+              $style = (new StyleBuilder())->setFormat('mm/dd/yyyy')->build();
+              $arr = $result;    
+              foreach ($arr as $key => $value) {
+                  $rowFromValues = WriterEntityFactory::createRowFromArray([
+                      $value['user'],
+                      $value['rfq_no'],
+                      ($value['created_at']=="")?"":$this->convertDates($value['created_at']),
+                      $value['quantity'],
+                      ($value['date']=="")?"":$this->convertDates($value['date']),
+                      $value['status'],
+                      $value['date_remaining'],
+                      $value['pending_with'],
+                      $value['po_no'],
+                      ($value['po_date']=="")?"":$this->convertDates($value['po_date']),
+                  ], $style);
+                 $writer->addRow($rowFromValues);
+              }
+              $writer->close();
+           // return Excel::download(new ExportAllRfq($result), 'allrfqdump.xlsx');
         }
         else{
           $result = [];
@@ -346,4 +392,10 @@ class RfqManagementController extends Controller
 
     }
     // ----------------------------------------------------------------------------------------
+
+    function convertDates($date)
+    {
+        $dates = Date::PHPToExcel($date);
+        return $dates;
+    }
 }
