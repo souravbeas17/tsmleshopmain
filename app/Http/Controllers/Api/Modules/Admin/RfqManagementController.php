@@ -337,10 +337,11 @@ class RfqManagementController extends Controller
            $curr = get_current_user();
            // dd($result);
            
-             $user = "C:"."\\"."Users"."\\".$curr."\\"."Downloads"."\\"."test.xlsx";
+             $user = "D:"."\\"."allrfqdump.xlsx";
              // dd($user);
                 $writer = WriterEntityFactory::createXLSXWriter();
-              $writer->openToFile($user);
+              // $writer->openToFile($user);
+                $writer->openToBrowser('allrfqdump.xlsx');
 
               $cells = [
                   WriterEntityFactory::createCell('Customer Name'),
@@ -382,7 +383,7 @@ class RfqManagementController extends Controller
           $result = [];
         }
 
-          return response()->json(['status'=>1,'message' =>'success.','result' => $result],200);
+          return response()->json(['status'=>1,'message' =>'success.','result' => 'Excel downloaded'],200);
           
         
         }catch(\Exception $e){
@@ -396,6 +397,7 @@ class RfqManagementController extends Controller
     function convertDates($date)
     {
         $dates = Date::PHPToExcel($date);
+        // dd($dates);
         return $dates;
     }
 }

@@ -11,6 +11,7 @@ use App\Models\Admin;
 use JWTAuth;
 use Validator;
 use App\ServicesMy\MailService;
+use Nullix\CryptoJsAes\CryptoJsAes;
 
 class AdminAuthController extends Controller
 {
@@ -56,7 +57,26 @@ class AdminAuthController extends Controller
         if ($validator->fails()) { 
             return response()->json($validator->errors());
         }
- 
+        
+        // --------------otp validiy check -----------------------------
+         $chk = Admin::where('email',$request->email)->first();
+
+         $validity = $chk->expiry;
+
+         $current = date('Y-m-d H:i:s');
+
+         if($current > $validity)
+         {
+            // dd('expire');
+
+            return response()->json(['status'=>0,'success' => false,'message' => array('OTP expired.')]);  
+         }
+
+
+        // -------------------------------------------------------------
+
+        if($chk->otp == $request->otp)
+        {
         $credentials = request(['email', 'password']);
         if (!$token = auth()->guard('admins')->attempt($credentials)) {
  
@@ -72,6 +92,10 @@ class AdminAuthController extends Controller
             'id'  => Auth::guard('admins')->id(),
             'token' => $jwt_token,
         ]);
+    }else{
+
+         return response()->json(['status'=>0,'success' => false,'message' => array('Invalid OTP.')]);  
+    }
    }
 
 
@@ -116,16 +140,24 @@ class AdminAuthController extends Controller
     public function adminloginotp(Request $request)
     {   
         try{
+
+
+        $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+        $password = "123456";
+
+        $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+
         $datestime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +10 minutes"));
         $inputotp['expiry'] =$datestime; 
         $otp = random_int(100000, 999999);
         $inputotp['otp'] =$otp; 
-        $categoryData = Admin::where('email',$request->email)->update($inputotp); 
+        $categoryData = Admin::where('email',$decrypted['email'])->update($inputotp); 
         $sub = "OTP For Login";
         $html = 'mail.Otpverificationmail';
         $data['otp'] = $otp;
         $cc_email = "";
-        $email = $request->email;
+        $email = $decrypted['email'];
         // dd($email);
         
         (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
