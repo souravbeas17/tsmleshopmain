@@ -12,6 +12,7 @@ use JWTAuth;
 use Validator;
 use App\ServicesMy\MailService;
 use Nullix\CryptoJsAes\CryptoJsAes;
+use Illuminate\Support\Facades\Hash;
 
 class AdminAuthController extends Controller
 {
@@ -171,4 +172,69 @@ class AdminAuthController extends Controller
                 return response()->json([$response]);
             }
     }
+
+
+       /**
+    * Get a JWT via given credentials.
+    *
+    * @return \Illuminate\Http\JsonResponse
+    */
+   public function adminForgetPass(Request $request)
+   {
+       // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|string|email|max:255'
+            
+        ]);
+        if ($validator->fails()) { 
+            return response()->json($validator->errors());
+        }
+        
+        // --------------otp validiy check -----------------------------
+         $chk = Admin::where('email',$request->email)->first();
+
+         $validity = $chk->expiry;
+
+         $current = date('Y-m-d H:i:s');
+
+         if($current > $validity)
+         {
+            // dd('expire');
+
+            return response()->json(['status'=>0,'success' => false,'message' => array('OTP expired.')]);  
+         }
+
+
+        // -------------------------------------------------------------
+
+        if($chk->otp == $request->otp)
+        {
+             if($request->pass == $request->conpass)
+             {
+                 $data['password'] = \Hash::make($request->pass);
+                 Admin::where('email',$request->email)->update($data);
+
+                    return response()->json([
+                        'status'=>1,
+                        'success' => true,
+                        'message'  => 'Password updated sucessfully'
+                        
+                    ]);
+            }else{
+
+                       return response()->json([
+                            'status'=>1,
+                            'success' => true,
+                            'message'  => 'Password and Confirm password does not match.'
+                            
+                          ]);
+
+            }
+        }
+
+      else{
+
+         return response()->json(['status'=>0,'success' => false,'message' => 'Invalid OTP.']);  
+    }
+   }
 }

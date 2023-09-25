@@ -8,6 +8,7 @@ use App\Models\Models\RequoteCount;
 use App\Models\Models\ScTransaction;
 use App\Models\Models\Smremark;
 use App\Models\Models\Order;
+use App\Models\Models\Guidelineprice;
 use DB;
 use Validator;
 use Nullix\CryptoJsAes\CryptoJsAes;
@@ -460,6 +461,64 @@ class RequoteController extends Controller
       }
 
    // ---------------------------------------------------------------------------
+
+  // -------------------------------- guidelines price -----------------------------------
+
+     public function priceguidlineSave(Request $request)
+      {
+
+          try{ 
+
+              $data = array();
+                   // echo "<pre>";print_r($request->all());exit();
+               foreach ($request->all() as $key => $value) {
+                  
+                  // echo "<pre>";print_r($value['Totalsum']);exit();
+                     $guideline = DB::table('guidelinesprices')->where('rfq_no',$value['rfq_no'])->where('schldId',$value['schldId'])->first();
+
+                          $data['totalsum'] = $value['Totalsum'];
+                          $data['bpt_price'] = $value['bpt_price'];
+                          $data['cam_discount'] = $value['cam_discount'];
+                          $data['dayscost'] = $value['daysCostCount'];
+                          $data['deliverymethod'] = $value['deliveryMethodVal'];
+
+                          $data['delivery_cost'] = $value['delivery_cost'];
+                          $data['interest_rate'] = $value['interest_rate'];
+                          $data['misc_expense'] = $value['misc_expense'];
+                          $data['price_premium'] = $value['price_premium'];
+                          $data['price_premium_sing'] = $value['price_premium_sing'];
+
+                          $data['rfq_no'] = $value['rfq_no'];
+                          $data['schldId'] = $value['schldId'];
+
+
+                          if(empty($guideline))
+                          {
+
+                              Guidelineprice::create($data);
+                            }else{
+
+                               Guidelineprice::where('rfq_no',$value['rfq_no'])->where('schldId',$value['schldId'])->update($data);
+                            }
+
+               }
+
+
+             
+              return response()->json(['status'=>1,
+                'message' =>'success',
+                'result' => 'Sucessfully updated'],
+                config('global.success_status'));
+
+
+        }catch(\Exception $e){
+
+         return response()->json(['status'=>0,'message' =>'error','result' => $e->getMessage()],config('global.failed_status'));
+       }
+
+         
+      }
+  // ---------------------------------------------------------------------------------
 
 
 }
