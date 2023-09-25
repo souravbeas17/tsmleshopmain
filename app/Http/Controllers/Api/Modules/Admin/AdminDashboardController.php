@@ -40,6 +40,9 @@ class AdminDashboardController extends Controller
 	        $data['totalkam'] = 0;
 	        $data['totalsalsplan'] = 0;
 	        $data['totalsalsman'] = 0;
+	        $data['totalsalsopt'] = 0;
+	        $data['totalsalsplant'] = 0;
+	        
 	   		foreach ($getuser as $key => $value) 
 	   		{
 	   			if ($value->user_type=='C') 
