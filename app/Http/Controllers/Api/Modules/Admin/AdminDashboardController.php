@@ -42,7 +42,7 @@ class AdminDashboardController extends Controller
 	        $data['totalsalsman'] = 0;
 	        $data['totalsalsopt'] = 0;
 	        $data['totalsalsplant'] = 0;
-	        
+
 	   		foreach ($getuser as $key => $value) 
 	   		{
 	   			if ($value->user_type=='C') 
@@ -71,7 +71,7 @@ class AdminDashboardController extends Controller
 		   		}
 
 	   		}
-              
+    
             return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
              // return response()->json(['status'=>1,$response],200);
               
