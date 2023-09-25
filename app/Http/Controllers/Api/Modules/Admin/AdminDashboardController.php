@@ -58,6 +58,14 @@ class AdminDashboardController extends Controller
 		   		{
 					$data['totalsalsman']+= 1;
 		   		}
+		   		elseif ($value->user_type=='OPT') 
+		   		{
+					$data['totalsalsopt']+= 1;
+		   		}
+		   		elseif ($value->user_type=='PLANT') 
+		   		{
+					$data['totalsalsplant']+= 1;
+		   		}
 
 	   		}
               
