@@ -8,6 +8,7 @@ use App\Exports\ExportRfq;
 use App\Exports\ExportAllRfq;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\Models\Order;
+use App\Models\Models\Guidelineprice;
 use DB;
 use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 use Box\Spout\Common\Entity\Row;
@@ -256,12 +257,13 @@ class RfqManagementController extends Controller
     $result = [];
         try{         
           
-            $quote = DB::table('quotes')
+            $quote = DB::table('quote_schedules')
+            ->leftjoin('quotes','quote_schedules.quote_id','quotes.id')
            ->leftjoin('users','quotes.user_id','users.id')
            ->leftjoin('rfq_status_refs','quotes.kam_status','rfq_status_refs.status')
-           ->select('quotes.rfq_no','quotes.user_id','users.name','quotes.quantity','rfq_status_refs.st_text as status','quotes.updated_at','quotes.id','quotes.kam_status','quotes.quote_type')
-           ->orderBy('quotes.updated_at','desc')
-           ->groupBy('quotes.rfq_no');
+           ->select('quotes.rfq_no','quotes.user_id','users.name','quote_schedules.quantity','rfq_status_refs.st_text as status','quotes.updated_at','quote_schedules.id','quotes.kam_status','quotes.quote_type','quote_schedules.schedule_no')
+           ->orderBy('quote_schedules.updated_at','desc');
+           // ->groupBy('quotes.rfq_no');
            
            if(!empty($request->rfq_no))
            {   
@@ -283,7 +285,7 @@ class RfqManagementController extends Controller
            // }
 
            
-           $quote = $quote->whereNull('quotes.deleted_at')
+           $quote = $quote->whereNull('quotes.deleted_at')->whereNull('quote_schedules.deleted_at')
            ->get()->toArray();
            // echo "<pre>";print_r($quote);exit();
 
@@ -291,10 +293,19 @@ class RfqManagementController extends Controller
           {
           foreach ($quote as $key => $value) {
             
+            if(!empty($value->rfq_no))
+            {
             $create = DB::table('quotes')->where('rfq_no',$value->rfq_no)->select('created_at')->first();
-
+            
             $po_details = Order::where('rfq_no',$value->rfq_no)->first();
 
+            $transct = DB::table('sc_transactions')->where('schedule',$value->schedule_no)->where('rfq_no',$value->rfq_no)->select('code','value')->get()->toArray();
+
+            $guideline = Guidelineprice::where('rfq_no',$value->rfq_no)->where('schldId',$value->schedule_no)->first();
+            
+            $val = array_column($transct, 'value', 'code');
+            
+            $result[$key]['id'] = $value->id;
             $result[$key]['user'] = $value->name;
             $result[$key]['rfq_no'] = $value->rfq_no;
             $result[$key]['created_at'] = date("d/m/Y", strtotime($create->created_at));
@@ -331,8 +342,24 @@ class RfqManagementController extends Controller
               $result[$key]['pending_with'] = $var;
               $result[$key]['po_no'] = (!empty($po_details)) ? $po_details->cus_po_no : '';
               $result[$key]['po_date'] = (!empty($po_details)) ? date("d/m/Y", strtotime($po_details->po_date)) : '';
+            $result[$key]['bpt'] = array_key_exists("BPT01",$val) ? $val['BPT01'] : 0;
+            $result[$key]['guide_bpt'] = (!empty($guideline)) ? $guideline->bpt_price : 0;
+            $result[$key]['qtypre'] = array_key_exists("QP01",$val) ? $val['QP01'] : 0;
+            $result[$key]['del_cost'] = array_key_exists("DC01",$val) ? $val['DC01'] : 0;
+            $result[$key]['int_rate'] = array_key_exists("IR01",$val) ? $val['IR01'] : 0;
+            $result[$key]['cre_cost'] = array_key_exists("CC01",$val) ? $val['CC01'] : 0;
+            $result[$key]['misc'] = array_key_exists("MC01",$val) ? $val['MC01'] : 0;
+            $result[$key]['ppa'] = array_key_exists("PPA01",$val) ? $val['PPA01'] : 0;
+            $result[$key]['final'] = array_key_exists("FP01",$val) ? $val['FP01'] : 0;
+            $result[$key]['g_qtypre'] = (!empty($guideline)) ? $guideline->price_premium : 0;
+            $result[$key]['g_del_cost'] = (!empty($guideline)) ? $guideline->delivery_cost : 0;
+            $result[$key]['g_int_rate'] = (!empty($guideline)) ? $guideline->interest_rate : 0;
+            $result[$key]['g_cre_cost'] = (!empty($guideline)) ? $guideline->dayscost : 0;
+            $result[$key]['g_misc'] = (!empty($guideline)) ? $guideline->misc_expense : 0;
+            $result[$key]['g_ppa'] = (!empty($guideline)) ? $guideline->bpt_price : 0;
+            $result[$key]['g_final'] = (!empty($guideline)) ? $guideline->totalsum : 0;
 
-
+             }
           }
            $curr = get_current_user();
            // dd($result);
@@ -354,6 +381,22 @@ class RfqManagementController extends Controller
                   WriterEntityFactory::createCell('Pending With'),
                   WriterEntityFactory::createCell('PO No.'),
                   WriterEntityFactory::createCell('PO Date'),
+                  WriterEntityFactory::createCell('Basic Price'),
+                  WriterEntityFactory::createCell('Guideline Basic Price'),
+                  WriterEntityFactory::createCell('Quality Premium'),
+                  WriterEntityFactory::createCell('Delivery Cost'),
+                  WriterEntityFactory::createCell('Interest Rate'),
+                  WriterEntityFactory::createCell('Credit Cost For'),
+                  WriterEntityFactory::createCell('Misc. Cost'),
+                  WriterEntityFactory::createCell('Proposed Price Adjustment'),
+                  WriterEntityFactory::createCell('Final Price'),
+                  WriterEntityFactory::createCell('Guideline Quality Premium'),
+                  WriterEntityFactory::createCell('Guideline Delivery Cost'),
+                  WriterEntityFactory::createCell('Guideline Interest Rate'),
+                  WriterEntityFactory::createCell('Guideline Credit Cost For'),
+                  WriterEntityFactory::createCell('Guideline Misc. Cost'),
+                  WriterEntityFactory::createCell('Guideline Proposed Price Adjustment'),
+                  WriterEntityFactory::createCell('Guideline Final Price'),
               ];
 
               $singleRow = WriterEntityFactory::createRow($cells);
@@ -373,6 +416,22 @@ class RfqManagementController extends Controller
                       $value['pending_with'],
                       $value['po_no'],
                       ($value['po_date']=="")?"":$this->convertDates($value['po_date']),
+                      ($value['bpt']== 0)?"":$value['bpt'],
+                      strval($value['guide_bpt']),
+                      ($value['qtypre']== 0)?"":$value['qtypre'],
+                      ($value['del_cost']== 0)?"":$value['del_cost'],
+                      ($value['int_rate']==0)?"":$value['int_rate'],
+                      ($value['cre_cost']== 0)?"":$value['cre_cost'],
+                      ($value['misc']== 0)?"":$value['misc'],
+                      ($value['ppa']== 0)?"":$value['ppa'],
+                      ($value['final']== 0)?"":$value['final'],
+                      strval($value['g_qtypre']),
+                      strval($value['g_del_cost']),
+                      strval($value['g_int_rate']),
+                      strval($value['g_cre_cost']),
+                      strval($value['g_misc']),
+                      strval($value['g_ppa']),
+                      strval($value['g_final']),
                   ], $style);
                  $writer->addRow($rowFromValues);
               }

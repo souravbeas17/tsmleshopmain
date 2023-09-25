@@ -35,7 +35,7 @@ class MailService
                 $mail->Host = 'mail.beas.co.in';           //  smtp host
                 $mail->SMTPAuth = true;
                 $mail->Username = 'developer@beas.co.in';   //  sender 
-                $mail->Password = 'A$dfg@12345';       // sender password
+                $mail->Password = 'A$dfg@12345---';       // sender password
                 $mail->SMTPSecure = 'STRTTLS';                  // encryption - ssl/tls
                 $mail->Port = 587; 
               

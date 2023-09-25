@@ -203,7 +203,8 @@ Route::get('so-excel-download/{contract_no?}',[SoTemporaryController::class,'SoE
 
   Route::get('reject_by_validtill',[CronSchedulerController::class,'rejectByValidtill']);
   Route::post('cam-customer-list',[AdminUserManageController::class,'camCustomerList'])->name('cam_castomer_list');
-   Route::post('cam-rfqsubmit-behalf-cust',[OrderManagementController::class,'camEfqsubmitBehalfCust'])->name('cam_rfqsubmit_behalf_cust');
+  Route::post('cam-rfqsubmit-behalf-cust',[OrderManagementController::class,'camEfqsubmitBehalfCust'])->name('cam_rfqsubmit_behalf_cust');
+  Route::get('escalation_for_pending',[CronSchedulerController::class,'escalationForPending']);
 // ---------------------------------------------------------------------------------------
 
 Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmiddleware']],function ()
@@ -270,6 +271,8 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 
           Route::post('submit_remarks',[RemarkController::class,'submitremarks']);
           Route::get('get_rfq_st/{rfq_no}',[QuoteController::class,'getRfqSt']);
+
+      Route::post('price_guideline_save',[RequoteController::class,'priceguidlineSave']);
 
       // ----------------- po edit -------------------------------------------------
 
@@ -491,6 +494,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 
 Route::post('admin-login', [AdminAuthController::class,'Adminlogin']);
 Route::post('admin-register', [AdminAuthController::class,'Adminregister']);
+Route::post('admin-forget-pass', [AdminAuthController::class,'adminForgetPass']);
 
 Route::post('user-bulk-upload',[BulkController::class,'storeUser']);
 Route::post('distributor-upload',[BulkController::class,'storeDistributor']);
