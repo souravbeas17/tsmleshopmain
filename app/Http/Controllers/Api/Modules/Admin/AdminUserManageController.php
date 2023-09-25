@@ -413,6 +413,17 @@ class AdminUserManageController extends Controller
                               ->where('user_type','!=','C')
 	                            ->get();
 	        }
+
+          elseif($request->user_type && $request->zone)
+          {   
+               
+              $data = User::orderBy('id','desc')
+                              ->where('user_type',$request->user_type) 
+                              ->where('zone',$request->zone) 
+                              ->where('user_type','!=','C')
+                              ->get();
+          }
+
           elseif($request->user_type)
           {      
              
