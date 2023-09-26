@@ -148,7 +148,7 @@ class AdminAuthController extends Controller
         $password = "123456";
 
         $decrypted = CryptoJsAes::decrypt($encrypted, $password);
-
+        // dd($decrypted);
         $datestime = date("Y-m-d H:i:s",strtotime(date("Y-m-d H:i:s")." +10 minutes"));
         $inputotp['expiry'] =$datestime; 
         $otp = random_int(100000, 999999);
@@ -182,7 +182,15 @@ class AdminAuthController extends Controller
    public function adminForgetPass(Request $request)
    {
        // dd($request->all());
-        $validator = Validator::make($request->all(), [
+
+        $encrypted = json_encode($request->all());
+        // $json = json_encode($encrypted1);
+        $password = "123456";
+
+        $decrypted = CryptoJsAes::decrypt($encrypted, $password);
+
+
+        $validator = Validator::make($decrypted, [
             'email' => 'required|string|email|max:255'
             
         ]);
@@ -191,7 +199,7 @@ class AdminAuthController extends Controller
         }
         
         // --------------otp validiy check -----------------------------
-         $chk = Admin::where('email',$request->email)->first();
+         $chk = Admin::where('email',$decrypted['email'])->first();
 
          $validity = $chk->expiry;
 
@@ -207,12 +215,12 @@ class AdminAuthController extends Controller
 
         // -------------------------------------------------------------
 
-        if($chk->otp == $request->otp)
+        if($chk->otp == $decrypted['otp'])
         {
-             if($request->pass == $request->conpass)
+             if($decrypted['pass'] == $decrypted['conpass'])
              {
-                 $data['password'] = \Hash::make($request->pass);
-                 Admin::where('email',$request->email)->update($data);
+                 $data['password'] = \Hash::make($decrypted['pass']);
+                 Admin::where('email',$decrypted['email'])->update($data);
 
                     return response()->json([
                         'status'=>1,
