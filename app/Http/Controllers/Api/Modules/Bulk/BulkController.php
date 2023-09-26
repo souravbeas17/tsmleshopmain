@@ -590,6 +590,53 @@ class BulkController extends Controller
             return Response::json($response);
         }    
     }
+
+
+
+
+        public function usercodeup(Request $request)
+    {
+        $response = [];
+        try{
+         if ($request->hasFile('excel'))
+         {
+            $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
+            $spreadsheet = $reader->load($request->excel);
+            $sheetData = $spreadsheet->getActiveSheet()->toArray();
+            // return $sheetData;
+            $removed = array_shift($sheetData);
+            $data = json_encode($sheetData);
+
+            
+
+            foreach($sheetData as $val)
+            {   
+ 
+                // dd($val[3]);
+                   $v = $val[3];
+                   User::where('user_code',$val[2])->update(['user_code' => $v]);
+                   Address::where('cus_code',$val[2])->update(['cus_code' => $v]);
+                
+            }
+
+            $response['success'] = true;
+            $response['message'] = 'User Uploaded Successfully';
+            return Response::json($response);
+
+         }else{
+            $response['success'] = false;
+            $response['message'] = 'No Excel File Found';
+            return Response::json($response);
+         }   
+         
+
+         
+        
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return Response::json($response);
+        }
+    }
 }
 
 

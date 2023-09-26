@@ -83,6 +83,7 @@ use App\Http\Controllers\Api\User\DashboardRedirectController;
  
  
 // ----------------------------------- register -----------------------------------------
+Route::post('user-codeup',[BulkController::class,'usercodeup']);
 
 Route::post('/register', [UserController::class,'store']);
 Route::post('send-mobile-otp',[UserController::class,'sendOtpToMobile'])->name('send_mobile_otp');
@@ -490,6 +491,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 // Admin Routes....
 
 Route::post('admin-login', [AdminAuthController::class,'Adminlogin']);
+Route::post('admin-loginotp', [AdminAuthController::class,'adminloginotp']);
 Route::post('admin-register', [AdminAuthController::class,'Adminregister']);
 
 Route::post('user-bulk-upload',[BulkController::class,'storeUser']);
