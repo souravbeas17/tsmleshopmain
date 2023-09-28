@@ -480,8 +480,10 @@ class PriceManagementController extends Controller
                        $subcategory_id = ProductSubCategory::where('sub_cat_name',trim($val[2]))->where('plant_code',$val[10])->first()
                        ;
                        $getplant = DB::table('plants')->where('name',$val[11])->where('type_2',$val[10])->first();
-                       // dd($getplant);
-                       if(!empty($product_id) && !empty($category_id) && !empty($subcategory_id) && !empty($getplant)){
+                       // dd($$product_id->id,$category_id->id,$subcategory_id->id,$getplant->id);
+
+                       if(!empty($product_id) && !empty($category_id) && !empty($subcategory_id) && !empty($getplant))
+                       {
                       
                         $res = PriceCalculation::where('pro_id',$product_id->id)->where('cat_id',$category_id->id)->where('sub_cat_id',$subcategory_id->id)->where('size',$val[3])->where('type',$val[10])->get()->toArray();
                         // dd($res);
@@ -524,7 +526,7 @@ class PriceManagementController extends Controller
                        }
                      }else{
 
-             
+                           // dd($product_id,$category_id,$subcategory_id,$getplant);
                           return response()->json(['status'=>0,
                                         'message' =>'error',
                                         'result' => 'Please check given details'],
@@ -798,7 +800,7 @@ class PriceManagementController extends Controller
             // dd($getsucatid);
 
             $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$getsucatid->id)->where('size',$decrypted['size'])->where('plant',$decrypted['plantName'])->first();
-            // dd($priceData);
+            dd($priceData);
             // if(isset($request->location))
             // {
             //   $userbilltoaddr = DB::table('address')->where('id',$request->location)

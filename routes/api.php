@@ -207,7 +207,7 @@ Route::get('so-excel-download/{contract_no?}',[SoTemporaryController::class,'SoE
    Route::post('cam-rfqsubmit-behalf-cust',[OrderManagementController::class,'camEfqsubmitBehalfCust'])->name('cam_rfqsubmit_behalf_cust');
 // ---------------------------------------------------------------------------------------
 
-Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmiddleware']],function ()
+Route::group(['prefix' => 'user'],function ()
 {
    Route::get('get_all_po_opt',[PoOptController::class,'getAllPoOpt']);
 
