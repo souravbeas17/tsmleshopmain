@@ -442,17 +442,21 @@ class DoController extends Controller
                foreach ($res as $key => $value) {
                   
                   $res = DB::table('sc_excel_datas')->where('ordr_no',$value->do_so_no)->first();
-                  $getdata = $this->newscnoget($res->Cust_Referance);
+
+                  if(!empty($res))
+                  {
+                      $getdata = $this->newscnoget($res->Cust_Referance);
+                    }
 
                   $arra[$key]['do_id'] = $value->do_id;
                   $arra[$key]['so_no'] = $value->do_so_no;
                   $arra[$key]['do_no'] = $value->do_no;
                   $arra[$key]['do_quantity'] = $value->do_quantity;
-                  $arra[$key]['so_date'] = date('d-m-Y',strtotime($res->date));
+                  $arra[$key]['so_date'] = (!empty($res)) ? date('d-m-Y',strtotime($res->date)) : '';
                   $arra[$key]['do_date'] = date('d-m-Y',strtotime($value->do_date));
-                  $arra[$key]['qty_cont'] = $res->QtyContractTSML;
-                  $arra[$key]['cus_name'] = $getdata['org_name'];
-                  $arra[$key]['cus_po_no'] = $res->Cust_Referance;
+                  $arra[$key]['qty_cont'] = (!empty($res)) ?  $res->QtyContractTSML : '';
+                  $arra[$key]['cus_name'] = (!empty($res)) ? $getdata['org_name'] : '';
+                  $arra[$key]['cus_po_no'] = (!empty($res)) ? $res->Cust_Referance : '';
                   
                }
              }
