@@ -108,8 +108,11 @@ class OrderManagementController extends Controller
            {
                $date =  date_create($request->date);
                $po_dt = date_format($date,"Y-m-d");
+
+               $date1 =  date_create($request->fromdate);
+               $po_dt1 = date_format($date1,"Y-m-d");
                // dd($date);
-               $quote = $quote->where('orders.po_date',$po_dt);
+               $quote = $quote->whereDate('orders.po_date','>=',$po_dt)->whereDate('orders.po_date','<=',$po_dt1);
            }
 
            
