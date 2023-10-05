@@ -800,7 +800,7 @@ class PriceManagementController extends Controller
             // dd($getsucatid);
 
             $priceData = PriceCalculation::where('pro_id',$decrypted['pro_id'])->where('cat_id',$decrypted['cat_id'])->where('sub_cat_id',$getsucatid->id)->where('size',$decrypted['size'])->where('plant',$decrypted['plantName'])->first();
-            dd($priceData);
+            // dd($priceData);
             // if(isset($request->location))
             // {
             //   $userbilltoaddr = DB::table('address')->where('id',$request->location)

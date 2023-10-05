@@ -43,12 +43,34 @@ class RfqManagementController extends Controller
                $quote = $quote->where('quotes.rfq_no',$request->rfq_no);
            }
 
-           if(!empty($request->date))
+           if(!empty($request->date) && !empty($request->fromdate))
            {   
                $date1 = date_create($request->date);
                $date = date_format($date1,"Y-m-d");
+
+               $date2 = date_create($request->fromdate);
+               $date22 = date_format($date2,"Y-m-d");
                // dd($date);
-               $quote = $quote->whereDate('quotes.updated_at',$date);
+               $quote = $quote->whereDate('quotes.updated_at','>=',$date)->whereDate('quotes.updated_at','<=',$date22);
+           }
+
+           if(!empty($request->role))
+           {   
+               if($request->role == 'Kam')
+               {
+                  $quote = $quote->where('quotes.kam_status','!=',4)->where('quotes.quote_type','=','C');
+               }else if($request->role == 'SM')
+               {
+                   $quote = $quote->where('quotes.kam_status','=',8)->orWhere('quotes.quote_type','=','SM');
+               }
+               else if($request->role == 'Sales')
+               {
+                     $quote = $quote->where('quotes.kam_status','=',7)->orWhere('quotes.quote_type','=','Sales');
+               }else
+               {
+                    $quote = $quote->where('quotes.kam_status','!=',4)->where('quotes.quote_type','=','Kam');
+               }
+               
            }
 
            // if(!empty($request->customer))
