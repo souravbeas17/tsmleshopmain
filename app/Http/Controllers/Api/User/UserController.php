@@ -153,8 +153,8 @@ class UserController extends Controller
 
         $validator = Validator::make($decrypted, [ 
             'mobile_no' =>'required|digits:10',
-            'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],
-              
+        //    'email' => ['required', 'string','max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],
+            'userid' => 'required',
         ],
         [   
             'mobile_no.required'=>'Mobile is required',               
@@ -437,6 +437,7 @@ class UserController extends Controller
                 // 'name'        => 'required', 
                 'email'        => 'required|unique:users,email',   
                 'password'     => 'required|min:10',  
+                'userid'        => 'required|unique:users',  
                 // 'address_proof_file' => 'required|mimes:jpg,jpeg,png,bmp',
                 'phone'        => 'required|unique:users,phone',
                 'company_pan'  => 'required|unique:users,company_pan', 
@@ -482,6 +483,8 @@ class UserController extends Controller
             $userData['formD_dt'] = base64_decode($request->formD_dt); 
             $userData['tcs_dt'] = base64_decode($request->tcs_dt);
             $userData['reg_by'] = 'P';
+         //   $userData['userid'] = base64_decode($request->userid);
+            $userData['userid'] = rand(1000000,9999999);
 
 
             if ($request->hasFile('address_proof_file'))
