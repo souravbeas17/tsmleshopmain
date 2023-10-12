@@ -15,6 +15,6 @@ use Illuminate\Support\Facades\Redirect;
 */
 
 Route::get('/', function () {
-    // 
+    //  Redirect to angular project
     return Redirect::to('https://esales.tatasteelmining.com/#/');
 });
