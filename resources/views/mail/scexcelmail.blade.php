@@ -27,7 +27,7 @@
         </tr>
         <tr>
             <td style="padding: 0 15px;"> 
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from TSML!</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Greetings from FAMD - Tata Steel!</p>
             </td>
         </tr>
         <tr>
@@ -135,12 +135,12 @@
         <tr>
             <td style="padding: 0 15px;">
                 <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Thank You,</p>
-                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">Team-tatasteelmining</p>
+                <p style="font-weight: 400; font-size: 15px; color: rgba(0,0,0,.9);">FAMD - Tata Steel</p>
             </td>
         </tr>
         <tr>
             <td style="padding: 0; border-top: 2px solid #f1f1f1;">
-                <p style="font-weight: 400; font-size: 15px; color: #fff; background: #09172F; text-align: center; padding: 10px 0; margin: 0;">© 2021 Tata Steel Mining Limited. All Rights Reserved.</p>
+                <p style="font-weight: 400; font-size: 15px; color: #fff; background: #09172F; text-align: center; padding: 10px 0; margin: 0;">© 2023 TFAMD - Tata Steel. All Rights Reserved.</p>
                 <table style="width: 100%;">
                     <tr>
                         <td>

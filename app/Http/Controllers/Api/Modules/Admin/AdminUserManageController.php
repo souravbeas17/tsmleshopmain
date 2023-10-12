@@ -333,15 +333,15 @@ class AdminUserManageController extends Controller
             
             $response['file_link'] = asset('storage/app/public/user/');
 
+            $getuser = DB::table('users')->where('users.id',$request->userId)->first();
+            // dd($getuser->zone);
+            $response['kam_data'] = DB::table('users')
+                              ->where(['user_type' => "Kam",'zone' => $getuser->zone])
+                              ->select('users.id as kam_id','users.name as kam_name','users.email as kam_email','users.zone as kzone')
+                              ->first();
+
             return response()->json(['status'=>1,'message' =>'success.','result' => $response],200);
             
-          
-          // $getuser = DB::table('users')->where('users.id',$request->userId)->first();
-          //   // dd($getuser->zone);
-          // $kam_data = DB::table('users')
-          //                     ->where(['user_type' => "Kam",'zone' => $getuser->zone])
-          //                     ->select('users.id as kam_id','users.name as kam_name','users.email as kam_email')
-          //                     ->first();
 
           // return response()->json(['status'=>1,'message' =>'success.','result' => $addressdata,'kamdata'=>$kam_data],200);
         
@@ -713,5 +713,112 @@ class AdminUserManageController extends Controller
             return response()->json([$response]);
           }
 
+    }
+
+
+      /**
+      * This for pending mailsn.
+      *
+      * @param  \App\Product  $product
+      * @return \Illuminate\Http\Response
+    */
+    public function updatependmails(Request $request)
+    { 
+      $response = [];
+        try{         
+          
+             if(empty($request->id))
+             {
+                 $arr['email'] = $request->email;
+                 $arr['role'] = 'sender';
+                 $arr['status'] = 1;
+
+                 DB::table('pending_mails')->insert($arr);
+           }else{
+               
+                $arr['email'] = $request->email;
+
+                DB::table('pending_mails')->where('id',$request->id)->update($arr);
+           }
+
+          return response()->json(['status'=>1,'message' =>'success.','result' => 'Inserted'],200);
+          
+        
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+    }
+
+          /**
+      * This for pending mailsn.
+      *
+      * @param  \App\Product  $product
+      * @return \Illuminate\Http\Response
+    */
+    public function getpendmails()
+    { 
+      $response = [];
+        try{         
+                
+                 $arr = DB::table('pending_mails')->get();
+             
+           
+          return response()->json(['status'=>1,'message' =>'success.','result' => $arr],200);
+          
+        
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+    }
+
+          /**
+      * This for pending mailsn.
+      *
+      * @param  \App\Product  $product
+      * @return \Illuminate\Http\Response
+    */
+    public function updatezone(Request $request)
+    { 
+      $response = [];
+        try{         
+                
+              $id = $request->id;
+              $arr['zone'] = $request->zone;
+
+
+             User::where('id',$id)->update($arr);
+           
+          return response()->json(['status'=>1,'message' =>'success.','result' => $arr],200);
+          
+        
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+    }
+
+
+        /*  * This for pending mailsn.
+      *
+      * @param  \App\Product  $product
+      * @return \Illuminate\Http\Response
+    */
+    public function getpendmailById($id)
+    { 
+      $response = [];
+        try{         
+                
+                 $arr = DB::table('pending_mails')->where('id',$id)->first();
+             
+           
+          return response()->json(['status'=>1,'message' =>'success.','result' => $arr],200);
+          
+        
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
     }
 }

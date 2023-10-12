@@ -272,7 +272,7 @@ Route::group(['prefix' => 'user','middleware' => ['assign.guard:users', 'jwtmidd
 
           Route::post('submit_remarks',[RemarkController::class,'submitremarks']);
           Route::get('get_rfq_st/{rfq_no}',[QuoteController::class,'getRfqSt']);
-
+          Route::post('price_guideline_save',[RequoteController::class,'priceguidlineSave']);
       // ----------------- po edit -------------------------------------------------
 
       Route::post('po_edit_multiple',[PoeditController::class,'poEditMultiple']);
@@ -720,6 +720,12 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
      Route::get('get_plant_name',[SubCategoryController::class,'getPlantName']);
      Route::get('get_plant_address',[SubCategoryController::class,'getPlantAddress']);
      Route::get('get_plant_addr/{id}',[QuoteController::class,'getPlantAddr']);
+
+     // ---------------------- pending mails & zone update----------------------------------
+     Route::post('update_pending_mails', [AdminUserManageController::class,'updatependmails']);
+     Route::get('get_pending_mails', [AdminUserManageController::class,'getpendmails']);
+     Route::get('get_pending_mail_by_id/{id}', [AdminUserManageController::class,'getpendmailById']);
+     Route::post('update_zone', [AdminUserManageController::class,'updatezone']);
 
 });
 
