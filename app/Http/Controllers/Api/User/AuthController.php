@@ -265,7 +265,8 @@ class AuthController extends Controller
                     $email = $userdetails['email'];
                     (new MailService)->dotestMail($sub,$html,$email,$data,$cc_email); 
            
-                    $msg = "OTP has been sent to this email address ".$decrypted['email'] ." successfully.";
+                  //  $msg = "OTP has been sent to this email address ".$decrypted['email'] ." successfully.";
+                  $msg = "OTP has been sent to this email address ".$email ." successfully.";
 
                   //  $getuser = User::where('email',$decrypted['email'])->first(); 
                   //  $userdata['email'] = $decrypted['email'];
