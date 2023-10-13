@@ -26,6 +26,8 @@ use Nullix\CryptoJsAes\CryptoJsAes;
 use Storage;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Exports\ExportUsers;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -1227,5 +1229,39 @@ class UserController extends Controller
             $response['error']['message'] = $th->getMessage();
             return Response::json($response);
            } 
+    }
+
+    public function exportUsers()
+    {
+        $result = array();
+        $res = User::where('user_type','!=','C')->get()->toArray();
+        foreach ($res as $key => $value) {
+            $result[$key]['name'] = $value['name'];
+            $result[$key]['email'] = $value['email'];
+            $result[$key]['userid'] = $value['userid'];
+            $result[$key]['org_name'] = $value['org_name'];
+            $result[$key]['user_type'] = $this->getUserTypeName($value['user_type']);
+            $result[$key]['zone'] = $value['zone'];
+            $result[$key]['created_at'] = date('Y-m-d H:i:sa',strtotime($value['created_at']));
+        }
+    //    echo '<pre>'; print_r($result); die();
+        $filename = 'users'.time().'.xlsx';
+        return Excel::download(new ExportUsers($result), $filename);
+    }
+
+    public function getUserTypeName($user_type)
+    {
+        $typename = '';
+        switch($user_type)
+        {
+            case 'C' : $typename = 'Customer'; break;
+            case 'Kam' : $typename = 'CAM'; break;
+            case 'Sales' : $typename = 'Sales plan'; break;
+            case 'SM' : $typename = 'Sales Head'; break;
+            case 'OPT' : $typename = 'OPT'; break;
+            case 'PLANT' : $typename = 'Plant'; break;
+            default : $typename =  '';
+        }
+        return $typename;
     }
 }
