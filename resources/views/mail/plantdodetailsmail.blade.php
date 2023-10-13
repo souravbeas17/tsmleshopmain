@@ -13,7 +13,7 @@
                     <tr>
                         <td style="vertical-align: top;">
                             <div style="padding-top:22px;">
-                                <img src="https://beas.in/tsml/assets/images/logo-white.png" style="max-width: 188px;">
+                                <img src="https://beas.in/tsml/assets/images/logo-white1.png" style="max-width: 188px;">
                             </div>
                         </td>
                         <td style="vertical-align: top;">

@@ -12,7 +12,7 @@
                 <table style="width: 100%;">
                     <tr>
                         <td>
-                            <img src="https://beas.in/tsml/assets/images/logo-white.png" style="max-width: 188px;">
+                            <img src="https://beas.in/tsml/assets/images/logo-white1.png" style="max-width: 188px;">
                         </td>
                         <td>
                             <img src="https://beas.in/tsml/assets/images/secondary-white.png" style="max-width: 50px; float: right;">
