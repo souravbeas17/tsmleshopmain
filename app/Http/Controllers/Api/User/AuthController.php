@@ -725,16 +725,19 @@ class AuthController extends Controller
    public function fologout(Request $request)
    {
 
-       $email = $request->input('email');
+      // $email = $request->input('email');
+       $userid = $request->input('userid');
        // dd($email);
-        $chkuser = User::where('email',$email)->first();
+      //  $chkuser = User::where('email',$email)->first();
+        $chkuser = User::where('userid',$userid)->first();
    
         if(!empty($chkuser))
         {
           // dd('ok');
           $updata['is_loggedin'] = 0;
           $updata['jwt_token'] = NULL;
-          $upuser = User::where('email',$chkuser->email)->update($updata);
+        //  $upuser = User::where('email',$chkuser->email)->update($updata);
+          $upuser = User::where('userid',$chkuser->userid)->update($updata);
           
 
           return response()->json([
