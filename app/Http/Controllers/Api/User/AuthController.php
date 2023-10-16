@@ -883,7 +883,9 @@ class AuthController extends Controller
         // dd($decrypted['email']);
 
         $validator = Validator::make($decrypted, [
-                'email' => ['required', 'string', 'email', 'max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],   
+              //  'email' => ['required', 'string', 'email', 'max:255','regex:/^\w+[-\.\w]*@(?!(?:myemail)\.com$)\w+[-\.\w]*?\.\w{2,4}$/'],   
+                'userid' => ['required', 'max:255'],   
+
             ]);
 
         if ($validator->fails()) {
@@ -891,8 +893,11 @@ class AuthController extends Controller
                 return Response::json($response);
             }
 
-        $data['email'] = $decrypted['email'];
-        $user = User::where('email',$decrypted['email'])->first();
+      /*   $data['email'] = $decrypted['email'];
+        $user = User::where('email',$decrypted['email'])->first(); */
+
+        $data['userid'] = $decrypted['userid'];
+        $user = User::where('userid',$decrypted['userid'])->first();
 
           if(!empty($user->forgot_pass_date)){
             $datestime = date("Y-m-d H:i:s");
@@ -914,7 +919,9 @@ class AuthController extends Controller
             if ($hour>24) 
             {
                // dd($hour);
-              User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+            //  User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+              User::where('userid',$decrypted['userid'])->update(['forgot_pass_date'=>null,'forgot_pass_count'=>0]);
+
             }
           }
 
@@ -930,7 +937,9 @@ class AuthController extends Controller
             if ($hour2>24) 
             {
                // dd($hour);
-              User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_date_2'=>null,'forgot_pass_count'=>0]);
+            //  User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>null,'forgot_pass_date_2'=>null,'forgot_pass_count'=>0]);
+              User::where('userid',$decrypted['userid'])->update(['forgot_pass_date'=>null,'forgot_pass_date_2'=>null,'forgot_pass_count'=>0]);
+
             }
           }
           
@@ -979,7 +988,8 @@ class AuthController extends Controller
         // $endTime = strtotime("+3 minutes", strtotime($datestime));
         // $dtime =  date('Y-m-d h:i:s', $endTime);
         // dd($datestime,$dtime);
-           $getuser =  User::where('email',$decrypted['email'])->first();
+          // $getuser =  User::where('email',$decrypted['email'])->first();
+          $getuser =  User::where('userid',$decrypted['userid'])->first();
            // dd($getuser->forgot_pass_count);
            $forgot_pass_count = $getuser->forgot_pass_count+1;
             // dd($forgot_pass_count);
@@ -987,18 +997,21 @@ class AuthController extends Controller
            
             $vcode = random_int(100000, 999999); 
           
-            User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_count'=>$forgot_pass_count,]);
+          //  User::where('email',$decrypted['email'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_count'=>$forgot_pass_count,]);
+          User::where('userid',$decrypted['userid'])->update(['remember_token'=>$vcode,'otp_expires_time'=>$datestime,'forgot_pass_count'=>$forgot_pass_count,]);
 
             if ($forgot_pass_count == 5) 
             {
               // $datestime = date("Y-m-d H:i:s",strtotime("+30 minutes"));
               // dd($datestime);
-               User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>$datestime]);
+              // User::where('email',$decrypted['email'])->update(['forgot_pass_date'=>$datestime]);
+               User::where('userid',$decrypted['userid'])->update(['forgot_pass_date'=>$datestime]);
             }
             if ($forgot_pass_count == 15) 
             {
               // $datestime = date("Y-m-d H:i:s",strtotime('+1 day'));
-               User::where('email',$decrypted['email'])->update(['forgot_pass_date_2'=>$datestime]);
+              // User::where('email',$decrypted['email'])->update(['forgot_pass_date_2'=>$datestime]);
+               User::where('userid',$decrypted['userid'])->update(['forgot_pass_date_2'=>$datestime]);
             }
 
             $mailSub = 'Forgot Password';
@@ -1045,7 +1058,8 @@ class AuthController extends Controller
            $decrypted = CryptoJsAes::decrypt($encrypted, $password);
 
         $validator = Validator::make($decrypted, [
-                'email' =>'required|string|email|max:255',
+               // 'email' =>'required|string|email|max:255',
+                'userid' => 'required',
                 'otp' =>'required|numeric|digits:6',
                 'password' =>'required|string|min:10|required_with:password-confirm', 
                 'password_confirm' =>'required|required_with:password|same:password',   
@@ -1062,7 +1076,8 @@ class AuthController extends Controller
                 return Response::json($response);
             }
 
-        $chkOtp = User::where('remember_token',$decrypted['otp'])->where('email',$decrypted['email'])->first();
+      //  $chkOtp = User::where('remember_token',$decrypted['otp'])->where('email',$decrypted['email'])->first();
+        $chkOtp = User::where('remember_token',$decrypted['otp'])->where('userid',$decrypted['userid'])->first();
         // dd($chkOtp);
         if(!@$chkOtp){
             $response['error']['message'] = "Invalid OTP or email please check !!";
