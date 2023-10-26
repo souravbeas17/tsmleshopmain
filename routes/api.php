@@ -727,6 +727,9 @@ Route::group(['prefix' => 'admin','middleware' => ['assign.guard:admins','jwtmid
      Route::get('get_pending_mail_by_id/{id}', [AdminUserManageController::class,'getpendmailById']);
      Route::post('update_zone', [AdminUserManageController::class,'updatezone']);
 
+     // -------------- pending activities -----------------------------------------------------
+     Route::post('get_all_pending',[RfqManagementController::class,'getAllPending']);
+
 });
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {

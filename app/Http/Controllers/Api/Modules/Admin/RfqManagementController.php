@@ -481,4 +481,57 @@ class RfqManagementController extends Controller
         // dd($dates);
         return $dates;
     }
+
+    // -------------------   pending activities -------------------------------------
+
+    public function getAllPending(Request $request)
+    {
+            $result = [];
+        try{    
+                        
+            $quote = DB::table('orders')
+           ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+           ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+           ->leftjoin('users','quotes.user_id','users.id')
+           ->select('quotes.rfq_no','quotes.user_id','orders.letterhead','orders.po_no','orders.po_date','users.name','orders.status',DB::raw("(sum(quote_schedules.quantity)) as tot_qt"),'orders.amdnt_no','orders.cus_po_no')
+           ->orderBy('quotes.updated_at','desc')
+           ->groupBy('quotes.rfq_no');
+           
+
+           
+           $quote = $quote->whereNull('quotes.deleted_at')->where('quote_schedules.quote_status',1)
+           ->whereNull('orders.cus_po_no')
+           ->get()->toArray();
+           // echo "<pre>";print_r($quote);exit();
+
+          if(!empty($quote))
+          {
+          foreach ($quote as $key => $value) {
+
+            $result[$key]['po_no'] = $value->po_no;
+            $result[$key]['cus_po_no'] = $value->cus_po_no;
+            $result[$key]['user'] = $value->name;
+            $result[$key]['rfq_no'] = $value->rfq_no;
+            $result[$key]['quantity'] = $value->tot_qt;
+            $result[$key]['amdnt_no'] = $value->amdnt_no;
+            $date =  date_create($value->po_date);
+            $po_dt = date_format($date,"d/m/Y");
+            $result[$key]['po_date'] = $po_dt;
+
+
+          }
+        }
+            $data['po'] = $result;
+
+
+            $data['sc'] = DB::table('sc_excel_datas')->whereNull('sc_no')->orWhere('ordr_no',NULL)->get();
+             
+          return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
+          
+        
+        }catch(\Exception $e){
+            $response['error'] = $e->getMessage();
+            return response()->json([$response]);
+        }
+    }
 }
