@@ -150,24 +150,31 @@ class AdminDashboardController extends Controller
 
 	   			  // $po = Order::wheredate('created_at','>=',$fdate)->wheredate('created_at','<=',$tdate)->count();
                   $sum = 0;
-	   			  $po = DB::table('orders')
+
+                  foreach ($zones as $k => $v) {
+                  	# code...
+                  
+	   			  $posum = DB::table('orders')
 			           ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+			           ->leftjoin('users','quotes.user_id','users.id')
 			           ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
 			           ->select('quote_schedules.quantity','quote_schedules.id','orders.po_no')
 			           ->wheredate('orders.created_at','>=',$fdate)->wheredate('orders.created_at','<=',$tdate)
 			           // ->groupBy('orders.rfq_no')
 			           ->whereNull('quotes.deleted_at')
-			           ->where('quote_schedules.quote_status',1)
+			           ->where('quote_schedules.quote_status',1)->where('users.zone',$v)
 			           // ->get();
                        ->sum('quote_schedules.quantity');
                        // dd($po);
-	   			  $order[$key]['month'] = date("F", strtotime($fdate));
-	   			  $order[$key]['order'] = $po;
-
 	   			  
+	   			  $zone[$key][$v] = $posum;
+	   			}
+
+	   			  $zone[$key]['month'] = date("F", strtotime($fdate));
+
 	   		}
             // dd($order);
-	   		$data['monthly_po'] = $order;
+	   		$data['zone_po'] = $zone;
          
 	   // ---------------------------------------------------------------------------------
     
