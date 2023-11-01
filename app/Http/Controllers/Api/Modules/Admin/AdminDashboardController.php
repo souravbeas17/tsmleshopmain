@@ -177,7 +177,7 @@ class AdminDashboardController extends Controller
 	   		$data['zone_po'] = $zone;
          
 	  // ------------ Map on the basis of delivery type -------------------------------------------
-		$delivery_type = ['Ex-works', 'DAP'];
+		$delivery_type = ['ExWorks', 'DAP'];
 		$delivery = array();
 		
 	   foreach ($year as $key => $value) {
