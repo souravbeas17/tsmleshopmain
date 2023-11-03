@@ -81,8 +81,8 @@ class RfqManagementController extends Controller
 
            
            $quote = $quote->whereNull('quotes.deleted_at')
-           ->get()->toArray();
-           // echo "<pre>";print_r($quote);exit();
+           ->get()->toArray(); 
+          
 
           if(!empty($quote))
           {

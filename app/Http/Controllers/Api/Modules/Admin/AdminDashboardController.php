@@ -175,36 +175,39 @@ class AdminDashboardController extends Controller
 	   		}
             // dd($order);
 	   		$data['zone_po'] = $zone;
-         
-	  // ------------ Map on the basis of delivery type -------------------------------------------
-		$delivery_type = ['ExWorks', 'DAP'];
-		$delivery = array();
-		
-	   foreach ($year as $key => $value) {
-		$fdate = $value.'-01';
-		$tdate = $value.'-31';
-		foreach ($delivery_type as $k => $v) {
-				$dosum = DB::table('orders')
-			           ->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
-			           ->leftjoin('users','quotes.user_id','users.id')
-			           ->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
-			           ->select('quote_schedules.quantity','quote_schedules.id','orders.po_no')
-			           ->wheredate('orders.created_at','>=',$fdate)->wheredate('orders.created_at','<=',$tdate)
-			           // ->groupBy('orders.rfq_no')
-			           ->whereNull('quotes.deleted_at')
-			           ->where('quote_schedules.quote_status',1)->where('quote_schedules.delivery','LIKE','%'.$v.'%')
-			           // ->get();
-                       ->sum('quote_schedules.quantity');
-				$delivery[$key][$v] = $dosum ;
 
-			}
-			$delivery[$key]['month'] = date("F", strtotime($fdate));
-	   }
-	   $data['delivery_po'] = $delivery;
+			  
+	   // ---------------------------------------------------------------------------------
+
+	 // ------------ Map on the basis of delivery type -------------------------------------------
+	 $delivery_type = ['ExWorks', 'DAP'];
+	 $delivery = array();
+	 
+	foreach ($year as $key => $value) {
+	 $fdate = $value.'-01';
+	 $tdate = $value.'-31';
+	 foreach ($delivery_type as $k => $v) {
+			 $dosum = DB::table('orders')
+					->leftjoin('quotes','orders.rfq_no','quotes.rfq_no')
+					->leftjoin('users','quotes.user_id','users.id')
+					->leftjoin('quote_schedules','quotes.id','quote_schedules.quote_id')
+					->select('quote_schedules.quantity','quote_schedules.id','orders.po_no')
+					->wheredate('orders.created_at','>=',$fdate)->wheredate('orders.created_at','<=',$tdate)
+					// ->groupBy('orders.rfq_no')
+					->whereNull('quotes.deleted_at')
+					->where('quote_schedules.quote_status',1)->where('quote_schedules.delivery','LIKE','%'.$v.'%')
+					// ->get();
+					->sum('quote_schedules.quantity');
+			 $delivery[$key][$v] = $dosum ;
+
+		 }
+		 $delivery[$key]['month'] = date("F", strtotime($fdate));
+	}
+	$data['delivery_po'] = $delivery;
+ 
+	
+	// ------------------------------------------------------------------------------------------
     
-	   
-
-	   // ------------------------------------------------------------------------------------------
             return response()->json(['status'=>1,'message' =>'success.','result' => $data],200);
              // return response()->json(['status'=>1,$response],200);
               

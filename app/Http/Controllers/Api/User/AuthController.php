@@ -112,7 +112,8 @@ class AuthController extends Controller
             // dd($input);
           //  $chkuser = User::where('email',$decrypted['email'])->first();
           $chkuser = User::where('userid',$decrypted['userid'])->first();
-           
+          /* echo $newhash; 
+          dd(\Hash::check('Test@12345', '$2y$10$oHWYf74ECJbf4IZEt./8LeOWpdThVY6PRAFP.MrWcNReGJMs806iG')); */
             if ($chkuser == null) {
               return response()->json([
                 'success' => false,'message' => 'Invalid credentials']);
@@ -708,7 +709,7 @@ class AuthController extends Controller
     */
    public function logout()
    {
-
+    
        $updata['is_loggedin'] = 0;
        $updata['jwt_token'] = NULL;
        $upuser = User::where('id',Auth::user()->id)->update($updata);

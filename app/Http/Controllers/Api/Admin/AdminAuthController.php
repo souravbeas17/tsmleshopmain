@@ -78,25 +78,26 @@ class AdminAuthController extends Controller
 
         if($chk->otp == $request->otp)
         {
-        $credentials = request(['email', 'password']);
-        if (!$token = auth()->guard('admins')->attempt($credentials)) {
- 
-            return response()->json(['status'=>0,'success' => false,'message' => array('Invalid Email or Password .')]);  
+            $credentials = request(['email', 'password']);
+            if (!$token = auth()->guard('admins')->attempt($credentials)) {
+    
+                return response()->json(['status'=>0,'success' => false,'message' => array('Invalid Email or Password .')]);  
+            }
+
+            $jwt_token =  $this->respondWithToken($token);
+            
+            return response()->json([
+                'status'=>1,
+                'success' => true,
+                'name'  => Auth::guard('admins')->user()->name,
+                'id'  => Auth::guard('admins')->id(),
+                'admin_type' => Auth::guard('admins')->user()->admin_type,
+                'token' => $jwt_token,
+            ]);
+        }else{
+
+            return response()->json(['status'=>0,'success' => false,'message' => array('Invalid OTP.')]);  
         }
-
-        $jwt_token =  $this->respondWithToken($token);
-        
-        return response()->json([
-            'status'=>1,
-            'success' => true,
-            'name'  => Auth::guard('admins')->user()->name,
-            'id'  => Auth::guard('admins')->id(),
-            'token' => $jwt_token,
-        ]);
-    }else{
-
-         return response()->json(['status'=>0,'success' => false,'message' => array('Invalid OTP.')]);  
-    }
    }
 
 
